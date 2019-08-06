@@ -1,0 +1,34 @@
+{% if banners %}
+	<div id="banner-{{module}}" class="uni-banner row">
+		{% if banners|length == 5 or banners|length == 6 %}
+			{% set class = 'col-xs-6 col-sm-2 col-md-2' %}
+		{% elseif banners|length == 4 %}
+			{% set class = 'col-xs-6 col-sm-3 col-md-3' %}
+		{% elseif banners|length == 3 %}
+			{% set class = 'col-xs-6 col-sm-4 col-md-4' %}
+		{% elseif banners|length == 2 %}
+			{% set class = 'col-xs-6 col-sm-6 col-md-6' %}
+		{% elseif banners|length == 1 %}
+			{% set class = 'col-xs-6 col-sm-12 col-md-12' %}			
+		{% endif %}
+		{% for banner in banners %}
+			<div class="{{class}}">
+				{% if banner.link %}
+					<div class="item">
+						<a href="{{banner.link}}" title="{{banner.title}}" class="image-after animate-hover">
+							<img src="image/{{banner.image}}" alt="{{banner.title}}" class="img-responsive" />
+							<div class="btn btn-primary">{{banner.title}}</div>
+						</a>
+					</div>
+				{% else %}
+					<div class="item">
+						<div class="image-after animate-hover">
+							<img src="image/{{banner.image}}" alt="{{banner.title}}" title="{{banner.title}}" class="img-responsive" />
+							<div class="btn btn-primary">{{banner.title}}</div>
+						</div>
+					</div>
+				{% endif %}
+			</div>
+		{% endfor %}
+	</div>
+{% endif %}

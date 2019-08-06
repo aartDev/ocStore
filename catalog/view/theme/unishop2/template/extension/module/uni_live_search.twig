@@ -1,0 +1,40 @@
+{% if products %}
+	{% for product in products %}
+		<li onclick="location='{{product.href}}'">
+			{% if product.image %}
+				<div class="image"><img alt="{{product.name}}" src="{{product.image}}"></div>
+			{% endif %}
+			<div class="name">
+				{{product.name}}
+				{% if product.description or product.rating %}
+					<div class="description">
+						{% if product.description %}<span>{{product.description}}</span>{% endif %}
+						{% if product.rating >= 0 %}
+							<span class="rating">
+								{% for i in 1..5 %}
+									<i class="{{product.rating < i ? 'far' : 'fa'}} fa-star"></i>
+								{% endfor %} 
+							</span>
+						{% endif %}
+					</div>
+				{% endif %}
+			</div>
+			{% if product.price %}
+				<div class="price">
+					{% if product.special %}
+						<span class="price-old">{{ product.price }}</span><span class="price-new">{{ product.special }}</span>
+					{% else %}
+						{{ product.price }}
+					{% endif %}
+				</div>
+			{% endif %}
+		</li>
+	{% endfor %}
+	{% if show_more %}
+		<li style="text-align:center;">
+			<a href="index.php?route=product/search&search={{search_phrase}}{{category_id ? '&category_id='~category_id}}&sub_category=true{{search_description ? '&description=true'}}">{{text_live_search_all}} ({{products_total}})</a>
+		</li>
+	{% endif %}
+{% else %}
+	<li style="text-align:center;padding:5px 0;">{{text_live_search_empty}}</li>
+{% endif %}

@@ -1,0 +1,140 @@
+</main>
+<footer>
+	{{subscribe}}
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-6 col-md-3">
+				<h5><i class="{{footer_column[1].icon}}"></i><span>{{footer_column[1].heading}}</span></h5>
+				<ul class="list-unstyled">
+					{% if informations %}
+						{% for information in informations %}
+							<li><a href="{{information.href}}"><i class="fa fa-chevron-right"></i>{{information.title}}</a></li>
+						{% endfor %}
+					{% endif %}
+					{% if footerlinks.1 %}
+						{% for footerlink in footerlinks.1 %}
+							<li>
+								{% if footerlink.link %}<a href="{{footerlink.link}}">{% endif %}
+								<i class="fa fa-chevron-right"></i>{{footerlink.title}}
+								{% if footerlink.link %}</a>{% endif %}
+							</li>
+						{% endfor %}
+					{% endif %}
+				</ul>
+			</div>
+			<div class="col-sm-6 col-md-3">
+				<h5><i class="{{footer_column[2].icon}}"></i><span>{{footer_column[2].heading}}</span></h5>
+				{% if footerlinks.2 %}
+					<ul class="list-unstyled">
+						{% for footerlink in footerlinks.2 %}
+							<li>
+								{% if footerlink.link %}<a href="{{footerlink.link}}">{% endif %}
+								<i class="fa fa-chevron-right"></i>{{footerlink.title}}
+								{% if footerlink.link %}</a>{% endif %}
+							</li>
+						{% endfor %}
+					</ul>
+				{% endif %}
+			</div>
+			<div class="clearfix visible-sm"></div>
+			<div class="col-sm-6 col-md-3">
+				<h5><i class="{{footer_column[3].icon}}"></i><span>{{footer_column[3].heading}}</span></h5>
+				{% if footerlinks.3 %}
+					<ul class="list-unstyled">
+						{% for footerlink in footerlinks.3 %}
+							<li>
+								{% if footerlink.link %}<a href="{{footerlink.link}}">{% endif %}
+								<i class="fa fa-chevron-right"></i>{{footerlink.title}}
+								{% if footerlink.link %}</a>{% endif %}
+							</li>
+						{% endfor %}
+					</ul>
+				{% endif %}
+			</div>
+			<div class="col-sm-6 col-md-3">
+				<h5><i class="{{footer_column[4].icon}}"></i><span>{{footer_column[4].heading}}</span></h5>
+				{% if footerlinks.4 %}
+					<ul class="list-unstyled">
+						{% for footerlink in footerlinks.4 %}
+							<li>
+								{% if footerlink.link %}<a href="{{footerlink.link}}">{% endif %}
+								<i class="fa fa-chevron-right"></i>{{footerlink.title}}
+								{% if footerlink.link %}</a>{% endif %}
+							</li>
+						{% endfor %}
+					</ul>
+				{% endif %}
+				<ul class="address list-unstyled">
+					{% if footer_address %}<li><i class="fa fa-map-marker"></i>{{footer_address}}</li>{% endif %}
+					{% if footer_open %}<li><i class="fa fa-calendar"></i>{{footer_open}}</li>{% endif %}
+					{% if footer_phone %}<li><i class="fa fa-phone"></i>{{footer_phone}}</li>{% endif %}
+					{% if footer_mail %}<li><i class="fa fa-envelope"></i>{{footer_mail}}</li>{% endif %}
+				</ul>
+			</div>
+			{% if footer_text %}
+				<div class="col-sm-12 hidden-xs">
+					<div class="text">{{footer_text}}</div>
+				</div>
+			{% endif %}
+		</div>
+	</div>
+	<div class="socials-payments">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12 col-md-6">
+					<div class="socials">
+						{% if socials %}
+							{% for social in socials %}
+								<a href="{{social.link}}" target="_blank" title="" ><i class="fab {{social.icon}}"></i></a>
+							{% endfor %}
+						{% endif %}
+					</div>
+				</div>
+				<div class="col-sm-12 col-md-6">
+					<hr class="visible-xs visible-sm" />
+					<div class="payments">
+						{% for icon in payment_icons %}
+							{% if 'catalog' in icon %}
+								<img src="image/{{icon}}" />
+							{% else %}
+								<div class="{{icon}}"></div>
+							{% endif %}
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</footer>
+
+<script>var uniJsVars = JSON.parse(atob('{{js_vars}}'));</script>
+
+<div id="fly-block">
+	{% if wishlist %}
+		<div class="fly-wishlist {{wishlist.total > 0 ? 'visible'}} {{compare.total > 0 ? 'margin'}}" onclick="window.open('{{wishlist.href}}')" title="{{text_fly_wishlist}}" data-toggle="tooltip">
+			<i class="fas fa-heart"></i><span class="total">{{wishlist.total}}</span>
+		</div>
+	{% endif %}
+	{% if compare %}
+		<div class="fly-compare {{compare.total > 0 ? 'visible'}}" onclick="window.open('{{compare.href}}')" title="{{text_fly_compare}}" data-toggle="tooltip">
+			<i class="fas fa-align-right"></i><span class="total">{{compare.total}}</span>
+		</div>
+		<div class="clearfix"></div>
+	{% endif %}
+	{% if show_fly_callback %}
+		<div class="fly-callback" onclick="uniRequestOpen()" {{fly_callback_text ? 'title="'~fly_callback_text~'" data-toggle="tooltip"'}}>
+			<i class="fa fa-phone"></i>
+		</div>
+	{% endif %}
+	<div class="scroll-up">
+		<i class="fa fa-chevron-up" onclick="scroll_to('body')" aria-hidden="true"></i>
+	</div>
+	<script>
+		$(window).scroll(function(){		
+			$(this).scrollTop() > 190 ? $('.scroll-up').addClass('show') : $('.scroll-up').removeClass('show');
+		});
+	</script>
+</div>
+{{notification}}
+</body>
+</html>

@@ -1,0 +1,216 @@
+{{ header }}
+<div class="container">
+	<ul class="breadcrumb {{ menu_expanded ? 'col-md-offset-3 col-lg-offset-3 col-xxl-offset-4' }}">
+		{% for key, breadcrumb in breadcrumbs %}
+			{% if key + 1 < breadcrumbs|length %}
+				<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+			{% else %}
+				{% if not hide_breadcrumbs %}<li>{{ breadcrumb.text }}</li>{% endif %}
+			{% endif %}
+		{% endfor %}
+	</ul>
+	<div class="row">
+		{{ column_left }}
+		{% if column_left and column_right %}
+			{% set class = 'col-sm-4 col-md-6 col-lg-6 col-xxl-12' %}
+		{% elseif column_left or column_right %}
+			{% set class = 'col-sm-8 col-md-9 col-lg-9 col-xxl-16' %}
+		{% else %}
+			{% set class = 'col-sm-12' %}
+		{% endif %}
+		<div id="content" class="{{ class }}">
+			{{ content_top }}
+			<div class="news_page">
+				<div class="heading-h1"><h1>{{ heading_title }}</h1></div>
+				<div class="clearfix">
+					{% if thumb %}
+						<div class="image">
+							<a href="{{ popup }}" title="{{ heading_title }}" class="img_popup image-after">
+								<img src="{{ thumb }}" alt="{{ heading_title }}" id="image" class="img-responsive" />
+							</a>
+						</div>
+					{% endif %}
+					<div class="description">{{ description }}</div>
+				</div>
+				<hr />
+				<div class="row">
+					{% if addthis %}
+						<div class="col-xs-12 col-sm-6 text-left">
+							{% if socialbutton %}
+								<div id="goodshare" data-socials="{% for i, social in socialbutton %}{{ social }}{{ i + 1 < socialbutton|length ? ',' }}{% endfor %}"></div>
+								<script defer async src="catalog/view/javascript/goodshare/goodshare.js"></script>
+								<link href="catalog/view/javascript/goodshare/goodshare.css" rel="preload" as="style" />
+								<link href="catalog/view/javascript/goodshare/goodshare.css" rel="stylesheet" media="screen" />
+							{% endif %}
+						</div>
+					{% endif %}
+					<div class="posted col-xs-12 {{ addthis ? 'col-sm-6' : 'col-sm-12' }}">
+						<i class="fa fa-eye" aria-hidden="true"></i>{{ viewed }}
+						<i class="fa fa-calendar" aria-hidden="true"></i>{{ posted }}
+					</div>
+				</div>
+				<div class="show_all_news text-right">
+					<a onclick="location='{{ news }}'">{{ button_news }}</a>
+				</div>
+			</div>
+			{% if prevnext %}
+				<div class="news-prevnext">
+					<div class="row">
+						<div class="item prev col-xs-6">
+							{% if prevnext.prev %}
+								<a href="{{ prevnext.prev.href }}" title="{{ news.name }}"><span>{{ prevnext.prev.name }}</span></a>
+								<div class="date">{{ prevnext.prev.date }}</div>
+							{% endif %}
+						</div>
+						<div class="item next col-xs-6">
+							{% if prevnext.next %}
+								<a href="{{ prevnext.next.href }}" title="{{ news.name }}"><span>{{ prevnext.next.name }}</span></a>
+								<div class="date">{{ prevnext.next.date }}</div>
+							{% endif %}
+						</div>
+					</div>
+					<script>uniAutoHeight('.news-prevnext a');</script>
+				</div>
+			{% endif %}
+			{% if related_products %}
+				<div class="heading"><span>{{ related_products_title }}</span></div>
+				<div class="uni-module news-product-related">
+					<div class="uni-module-wrapper">
+						{% for product in related_products %}
+							<div class="product-thumb">
+								<div class="image" {{ product.special_date_end ? 'data-special-end="'~product.special_date_end~'"' }}>
+									{% include 'unishop2/template/extension/module/uni_stickers.twig' %}
+									<a href="{{ product.href }}">
+										<img src="{{ product.thumb }}" {% if product.additional_image %}data-additional="{{ product.additional_image }}"{% endif %} alt="{{ product.name }}" title="{{ product.name }}" class="img-responsive" />
+									</a>
+								</div>
+								<div class="caption">
+									<a href="{{ product.href }}">{{ product.name }}</a>
+									{% if product.show_description %}
+										<p class="description">{{ product.description }}</p>
+									{% endif %}
+									{% include 'unishop2/template/extension/module/uni_attributes.twig' %}
+									{% include 'unishop2/template/extension/module/uni_options.twig' %}
+									{% include 'unishop2/template/extension/module/uni_quantity_indicator.twig' %}
+									{% if product.rating >= 0 and show_rating %}
+										<div class="rating">
+											{% for i in 1..5 %}
+												<i class="{{ product.rating < i ? 'far' : 'fa' }} fa-star"></i>
+											{% endfor %} 
+											{% if product.num_reviews > 0 %}<sup><a onclick="location='{{ product.href }}#tab-review'">{{ product.num_reviews }}</a></sup>{% endif %}
+										</div>
+									{% endif %}
+									{% if product.price %}
+										<p class="price" data-price="{{ product.price_value }}" data-special="{{ product.special_value }}">
+											{% if product.special %}
+												<span class="price-old">{{ product.price }}</span> <span class="price-new">{{ product.special }}</span> 
+											{% else %}
+												{{ product.price }}
+											{% endif %}
+											{% if product.tax %}<span class="price-tax">{{ text_tax }} {{ product.tax }}</span>{% endif %}
+										</p>
+									{% endif %}
+								</div>
+								<div class="cart">
+									{% if product.show_quantity %}
+										<div class="quantity">
+											<input type="text" name="quantity" value="{{ product.minimum }}" data-minimum="{{ product.minimum }}" class="form-control" />
+											<span>
+												<i class="fa fa-plus btn btn-default"></i>
+												<i class="fa fa-minus btn btn-default"></i>
+											</span>
+										</div>
+									{% endif %}
+									<button type="button" class="add_to_cart btn {{ product.cart_btn_class }} {{ product.product_id }}" data-toggle="tooltip" title="{{ product.cart_btn_text }}" onclick="cart.add({{ product.product_id }}, this)"><i class="{{ product.cart_btn_icon }}"></i><span class="hidden-sm hidden-md">{{ product.cart_btn_text }}</span></button>
+									<button type="button" class="quick_order btn {{ not product.quick_order ? 'hidden' }}" data-toggle="tooltip" title="{{ quick_order_title }}" onclick="quick_order('{{ product.product_id }}');"><i class="{{ quick_order_icon }}"></i>{% if show_quick_order_text %}<span class="hidden-sm hidden-md">{{ quick_order_title }}</span>{% endif %}</button>
+									<button type="button" class="wishlist btn {{ wishlist_btn_disabled ? 'hidden' }}" data-toggle="tooltip" title="{{ button_wishlist }}" onclick="wishlist.add('{{ product.product_id }}');"><i class="fa fa-heart"></i></button>
+									<button type="button" class="compare btn {{ compare_btn_disabled ? 'hidden' }}" data-toggle="tooltip" title="{{ button_compare }}" onclick="compare.add('{{ product.product_id }}');"><i class="fas fa-align-right"></i></button>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+				<script>
+					$('.news-product-related').uniModules({
+						type:'{{ type_view ? type_view : 'carousel' }}',
+						autoheight:['caption > a', 'attribute', 'description', 'option'],
+						loop:{{ related_products|length > 4 ? 'true' : 'false' }}
+					});
+					{% if show_timer %}
+					$('.news-product-related .image').each(function() {
+						var date = $(this).attr('data-special-end');
+			
+						if(date) {
+							$(this).uniTimer({
+								date      :''+date+'',
+								texts     :['{{ text_special_day }}','{{ text_special_hour }}','{{ text_special_min }}','{{ text_special_sec }}'],
+								hideText  :false,
+								hideIsNull:false
+							});
+						}
+					});
+					{% endif %}
+				</script>
+			{% endif %}
+			<script>
+				$(document).ready(function() {
+					$('.news_page .description img').each(function() {
+						var href = $(this).attr('src');
+						$(this).css('max-width', '350px').attr('itemprop', 'image');
+						$(this).wrap('<a href="'+href+'" class="img_popup"></a>');
+					});
+					$('.news_page .image, .news_page .description').magnificPopup({
+						type:'image',
+						delegate: 'a.img_popup',
+						gallery: {
+							enabled:true
+						}
+					});
+				});
+			</script>
+			{{ content_bottom }}
+		</div>
+		{{ column_right }}
+	</div>
+</div>
+<script type="application/ld+json">
+	{
+		"@context": "http://schema.org",
+		"@type": "BreadcrumbList",
+		"itemListElement": [
+		{% for i, breadcrumb in breadcrumbs %}
+			{
+			"@type": "ListItem",
+			"position": {{ i+1 }},
+			"name": "{{ i == 0 ? shop_name: breadcrumb.text }}",
+			"item": "{{ breadcrumb.href }}"
+			{{ i + 1 < breadcrumbs|length ? '},' : '}' }}
+		{% endfor %}
+		]
+	}
+</script>
+<script type="application/ld+json">
+	{
+		"@context": "http://schema.org",
+		"@type": "NewsArticle",
+		"headline": "{{ microdata.title }}",
+		"image": [
+			"{{ microdata.image }}"
+		],
+		"datePublished": "{{ microdata.date }}",
+		"dateModified": "{{ microdata.date }}",
+		"description": "",
+		"articleBody": "{{ microdata.description }}",
+		"mainEntityOfPage": "{{ microdata.url }}",
+		"author": "Administration",
+		"publisher": {
+			"@type": "Organization",
+			"name": "{{ microdata.publisher_name }}",
+			"logo": {
+				"@type": "imageObject",
+				"url": "{{ microdata.publisher_logo }}"
+			}
+		}
+	}
+</script>
+{{ footer }}

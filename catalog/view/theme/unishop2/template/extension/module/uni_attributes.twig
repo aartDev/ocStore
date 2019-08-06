@@ -1,0 +1,7 @@
+{% if product.attributes %}
+	<p class="attribute description">
+		{% for attribute in product.attributes %}
+			{{show_attr_name ? attribute.name~':' : ''}} <span>{{attribute.text}}</span>
+		{% endfor %}
+	</p>
+{% endif %}

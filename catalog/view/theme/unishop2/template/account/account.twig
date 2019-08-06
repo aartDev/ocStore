@@ -1,0 +1,99 @@
+{{header}}
+<div class="container">
+	<ul class="breadcrumb">
+		{% for key, breadcrumb in breadcrumbs %}
+			{% if key+1 < breadcrumbs|length %}
+				{% if key == 0 %}
+					<li><a href="{{breadcrumb.href}}">{{breadcrumb.text}}</a></li>
+				{% else %}
+					<li><a href="{{breadcrumb.href}}"><span itemprop="title">{{breadcrumb.text}}</span></a></li>
+				{% endif %}
+			{% else %}
+				<li>{{breadcrumb.text}}</li>
+			{% endif %}
+		{% endfor %}
+	</ul>
+	{% if success %}
+		<div class="alert alert-success"><i class="fa fa-check-circle"></i> {{success}}</div>
+	{% endif %}
+	<div class="row">
+		{{column_left}}
+		{% if column_left and column_right %}
+			{% set class = 'col-sm-4 col-md-4 col-lg-6' %}
+		{% elseif column_left or column_right %}
+			{% set class = 'col-sm-8 col-md-9 col-lg-9 col-xxl-16' %}
+		{% else  %}
+			{% set class = 'col-sm-12' %}
+		{% endif %}
+		<div id="content" class="{{class}} account-index">
+			{{content_top}}
+			<div class="heading-h1"><h1>{{ text_my_account }}</h1></div>
+			<div class="row">
+				<div class="col-xs-6 col-sm-3 col-md-2">
+					<a href="{{edit}}"><i class="fa fa-edit"></i>{{text_edit}}</a>
+				</div>
+				<div class="col-xs-6 col-sm-3 col-md-2">
+					<a href="{{password}}"><i class="fa fa-ellipsis-h"></i>{{text_password}}</a>
+				</div>
+				<div class="col-xs-6 col-sm-3 col-md-2">
+					<a href="{{address}}"><i class="fa fa-address-book"></i>{{text_address}}</a>
+				</div>
+				<div class="col-xs-6 col-sm-3 col-md-2">
+					<a href="{{wishlist}}"><i class="fa fa-heart"></i>{{text_wishlist}}</a>
+				</div>
+				<div class="col-xs-6 col-sm-3 col-md-2">
+					<a href="{{order}}"><i class="fa fa-history"></i>{{text_order}}</a>
+				</div>
+				<div class="col-xs-6 col-sm-3 col-md-2">
+					<a href="{{download}}"><i class="fa fa-download"></i>{{text_download}}</a>
+				</div>
+				{% if reward %}
+					<div class="col-xs-6 col-sm-3 col-md-2">
+						<a href="{{reward}}"><i class="fa fa-gift"></i>{{text_reward}}</a>
+					</div>
+				{% endif %}
+				<div class="col-xs-6 col-sm-3 col-md-2">
+					<a href="{{return}}"><i class="fa fa-reply" aria-hidden="true"></i>{{text_return}}</a>
+				</div>
+				<div class="col-xs-6 col-sm-3 col-md-2">
+					<a href="{{transaction}}"><i class="fa fa-exchange-alt"></i>{{text_transaction}}</a>
+				</div>
+				<div class="col-xs-6 col-sm-3 col-md-2">
+					<a href="{{recurring}}"><i class="fa fa-user"></i>{{text_recurring}}</a>
+				</div>
+				<div class="col-xs-6 col-sm-3 col-md-2">
+					<a href="{{newsletter}}"><i class="fa fa-newspaper"></i>{{text_newsletter}}</a>
+				</div>
+			</div>
+			<div class="row">
+				<div class="heading col-xs-12"><span>{{text_my_affiliate}}</span></div>
+				<div class="col-xs-6 col-sm-3 col-md-2">
+					<a href="{{affiliate}}"><i class="fa fa-users"></i>{{not tracking ? text_affiliate_add : text_affiliate_edit}}</a>
+				</div>
+				{% if tracking %}
+					<div class="col-xs-6 col-sm-3 col-md-2">
+						<a href="{{tracking}}"><i class="fa fa-newspaper-o"></i>{{text_tracking}}</a>
+					</div>
+				{% endif %}
+			</div>
+			{% if credit_cards %}
+				<div class="row">
+					<div class="heading col-xs-12"><span>{{text_credit_card}}</span></div>
+					<div class="col-xs-12">
+						<ul class="list-unstyled">
+							{% for credit_card in credit_cards %}
+								<li><a href="{{ credit_card.href }}">{{ credit_card.name }}</a></li>
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+			{% endif %}
+			</div>
+			<script type="text/javascript">
+				autoheight('.account-index .col-xs-6 > a');
+			</script>
+			{{content_bottom}}</div>
+		{{column_right}}
+	</div>
+</div>
+{{footer}}

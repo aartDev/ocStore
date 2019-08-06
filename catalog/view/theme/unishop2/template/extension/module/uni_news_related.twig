@@ -1,0 +1,30 @@
+{% if news %}
+	<div class="uni-module news-related">
+		{% for news in news %}
+			<div class="item">
+				{% if news.image %}
+					<div class="image">
+						<a onclick="location='{{news.href}}'" title="{{news.name}}" class="image-after animate-hover">
+							<img src="{{news.image}}" alt="{{news.name}}" class="img-responsive" />
+						</a>
+					</div>
+				{% endif %}
+				<div class="">
+					<div class="name"><a href="{{news.href}}" title="{{news.name}}">{{news.name}}</a></div>
+					<p class="description">
+						{{news.description}}
+					</p>
+					<div class="posted">
+						<i class="fa fa-calendar"></i>{{news.posted}}
+						<i class="fa fa-eye"></i>{{news.viewed}}
+						<a onclick="location='{{news.href}}'"><i class="fa fa-long-arrow-alt-right" title="{{text_more}}" data-toggle="tooltip"></i></a>
+					</div>
+				</div>
+			</div>
+			<hr class="clearfix" />
+		{% endfor %}
+	</div>
+	<script>
+		if(!$('body').find('.tab-news span').length) {$('body').find('.tab-news').append(' <span>({{news|length}})</span>')}
+	</script>
+{% endif %}

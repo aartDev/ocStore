@@ -1,0 +1,16 @@
+#subscribe{position:relative;margin:-15px 0 15px;padding:15px 0 10px;background:rgba(255, 255, 255, .08)}
+#subscribe .subscribe-info {overflow:hidden;margin:-2px 0 0;line-height:18px;font-size:1.0em}
+#subscribe .subscribe-info div {float:left;height:32px;line-height:35px;margin:0 10px 0 0;font-size:2.9em}
+#subscribe .subscribe-input {overflow:hidden}
+#subscribe .subscribe-input .email, #subscribe .subscribe-input .pass {float:left;overflow:hidden;transition:all ease-in-out .3s}
+#subscribe .subscribe-input .email {width:100%}
+#subscribe .subscribe-input .pass {width:0}
+#subscribe .subscribe-input .email.show-pass{width:70%}
+#subscribe .subscribe-input .pass.show-pass{width:30%;padding:0 0 0 20px}
+#subscribe .form-control, #subscribe .subscribe-button .btn {height:32px}
+#subscribe .input {margin:10px 0 0;font-size:.85em}
+#subscribe .input span {width:12px;height:12px;}
+#subscribe .input b {font-weight:400;text-decoration:underline}
+@media (max-width:767px){
+	#subscribe .subscribe-input {margin:10px 0}
+}

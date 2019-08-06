@@ -1,0 +1,19 @@
+#modal-login-form .form-control + .form-control {margin:10px 0 0}
+#modal-login-form a {font-size:.85em;border-bottom:dotted 1px}
+#modal-login-form .row .col-xs-12 {margin:10px 0}
+#modal-login-form .row .col-xs-12 + .col-xs-12{margin:0}
+#modal-login-form label {display:block;margin:0;font-size:.95em}
+
+#modal-register-form .form-control + .form-control, #modal-register-form .customer-group, #modal-register-form .input {margin:10px 0 0}
+#modal-register-form .customer-group label {margin:0 0 4px}
+#modal-register-form a {border-bottom:dotted 1px}
+#modal-register-form .row .col-xs-12 {margin:10px 0;font-size:.95em}
+#modal-register-form .row .col-xs-12 + .col-xs-12{margin:0}
+#modal-register-form label {display:block;margin:0;font-size:.95em}
+#modal-register-form legend {margin:0;padding:10px 0 5px;font-size:1.2em;font-weight:500;border:0}
+#modal-register-form label.col-sm-2 {display:none}
+#modal-register-form .col-sm-10 {width:100%;padding:0}
+#modal-register-form .col-sm-10 input {margin:0 0 10px}
+#modal-register-form .text-danger {margin:0 0 10px}
+
+.g-recaptcha {transform:scale(0.9);margin:0 0 0 -15px}

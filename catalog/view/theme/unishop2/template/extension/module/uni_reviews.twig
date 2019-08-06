@@ -1,0 +1,46 @@
+{% if reviews %}
+	<div class="heading"><span>{{heading_title}}</span></div>
+	<div class="uni-module reviews-module">
+		<div class="uni-module-wrapper">
+			{% for review in reviews %}
+				<div class="product-thumb">
+					<div class="row">
+						<div class="image col-xs-12 col-sm-4">
+							<a onclick="location='{{review.href}}'">
+								<img src="{{review.thumb}}" alt="{{review.name}}" title="{{review.name}}" class="img-responsive" />
+							</a>
+						</div>
+						<div class="caption col-xs-12 col-sm-8">
+							<a href="{{review.href}}">{{review.name}}</a>
+							<p class="description">
+								{{review.description}}
+							</p>
+						</div>
+					</div>
+					<div class="row">
+						{% if review.rating %}
+							<div class="rating col-xs-4">
+								{% for i in 1..5 %}<i class="{{review.rating < i ? 'far fa-star' : 'fa fa-star'}}"></i>{% endfor %}
+							</div>
+						{% endif %}
+						<div class="posted">
+							<i class="fa fa-calendar" aria-hidden="true"></i>{{review.date_added}}
+							<span class="author">{{review.author}}</span>
+							{% if show_all_button %}
+								<a onclick="location.href='{{review.link_all_reviews}}'" class="hidden-xs"><i class="fa fa-long-arrow-alt-right" title="{{text_all_reviews}}" data-toggle="tooltip"></i></a>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+	<script>
+		$('.reviews-module').uniModules({
+			type:'{{type_view ? type_view : 'carousel'}}',
+			items: {0:{items:1},580:{items:2},720:{items:2},1050:{items:3},1400:{items:4}},
+			loop: {{reviews|length > 3 ? 'true' : 'false'}},
+			autoheight:['caption > a', 'description']
+		});
+	</script>
+{% endif %}

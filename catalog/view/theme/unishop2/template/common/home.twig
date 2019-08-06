@@ -1,0 +1,24 @@
+{{header}}
+<div class="home-page container">
+	<div class="row">
+		{{column_left}}
+		{% if (column_left or menu_expanded) and column_right %}
+			{% set class = 'col-sm-12 col-md-6 col-lg-6 col-xxl-12' %}
+		{% elseif column_left or column_right %}
+			{% set class = 'col-sm-12 col-md-9 col-lg-9 col-xxl-16' %}
+		{% else %}
+			{% set class = 'col-sm-12' %}
+		{% endif %}
+		{% set class2 = (not column_left and menu_expanded) ? 'col-md-offset-3 col-lg-offset-3 col-xxl-offset-4' %}
+		<div id="content" class="{{class}} {{ class2 }}">
+			{{content_top}}
+		</div>
+		{{column_right}}
+	</div>
+	<div class="row">
+		<div class="col-xs-12">
+			{{content_bottom}}
+		</div>
+	</div>
+</div>
+{{footer}}

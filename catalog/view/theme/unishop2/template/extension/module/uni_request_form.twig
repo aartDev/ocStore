@@ -1,0 +1,67 @@
+<div id="modal-request-form" class="modal">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">{{reason ? reason : text_callback}}</h4>
+			</div>
+			<div id="callback" class="modal-body">
+				<form class="callback">
+					<input type="hidden" name="type" value="{{reason ? reason : text_callback}}" />
+					<div><input type="text" name="name" value="" placeholder="{{name_text}}" class="form-control"/></div>
+					{% if show_phone %}
+						<div><input type="tel" name="phone" value="" placeholder="{{phone_text}}" class="customer_phone form-control" /></div>
+					{% endif %}
+					{% if show_email %}
+						<div class="mail" {{reason ? 'style="display:block"'}}><input type="email" name="mail" value="" placeholder="{{mail_text}}" class="form-control" {{not reason ? 'disabled="disabled"'}} /></div>
+					{% endif %}
+					{% if show_comment %}
+						<div class="comment" {{reason ? 'style="display:block"'}}>
+							<textarea name="comment" placeholder="{{comment_text}}" class="form-control" {{ not reason ? 'disabled="disabled"'}} ></textarea>
+						</div>
+					{% endif %}
+					{% if product_id %}<input type="hidden" name="product_id" value="{{product_id}}" />{% endif %}
+					<div>
+						{% if not reason %}
+							<div>
+								{% if show_reason1 %}
+									<label class="input"><input type="radio" name="reason" value="{{text_reason1}}" id="reason1" checked="checked" /><span></span>{{text_reason1}}</label>
+								{% endif %}
+								{% if show_reason2 %}
+									<label class="input"><input type="radio" name="reason" value="{{text_reason2}}" id="reason2" /><span></span>{{text_reason2}}</label>
+								{% endif %}
+								{% if show_reason3 %}
+									<label class="input"><input type="radio" name="reason" value="{{text_reason3}}" id="reason3" /><span></span>{{text_reason3}}</label>
+								{% endif %}
+							</div>
+						{% endif %}
+					</div>
+					{% if text_agree %}
+						<div>
+							<label class="input"><input id="confirm" type="checkbox" name="confirm" value="1" class="form-control" /><span></span>{{text_agree}}</label>
+						</div>
+					{% endif %}
+					<div><button type="button" class="callback_button btn btn-primary" data-loading-text="{{text_loading}}">{{text_send}}</button></div>
+				</form>
+				<script type="text/javascript">
+					$(document).ready(function() {
+						$('#callback #reason1, #callback #reason2').on('click', function() {
+							$('.callback .mail input, .callback .comment textarea').attr('disabled', true).parent().hide();
+						});
+
+						$('#callback #reason3').on('click', function() {
+							$('.callback .mail input, .callback .comment textarea').attr('disabled', false).parent().show();
+						});
+
+						$('.callback_button').on('click', function() {
+							uniRequestSend();
+						});
+					});
+					$('body').on('focus', '#callback .customer_phone', function(){
+						$(this).mask('{{phone_mask}}');
+					});
+				</script>
+			</div>
+		</div>
+	</div>
+</div>

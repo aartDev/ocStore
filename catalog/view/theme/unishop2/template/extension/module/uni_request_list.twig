@@ -1,0 +1,125 @@
+<div id="question-list">
+	{% if requests %}
+		{% for request in requests %}
+			<div class="item row">
+				<div class="col-xs-12 col-sm-2 col-xxl-3">
+					<div class="name"><i class="fa fa-user"></i>{{request.name}}</div>
+					<div class="date-added"><i class="fa fa-calendar" aria-hidden="true"></i>{{request.date_added}}</div>
+				</div>
+				<div class="col-xs-12 col-sm-10 col-xxl-17">
+					<div class="comment">
+						{{request.comment}}
+					</div>
+					{% if request.admin_comment != '' %}
+						<div class="admin-reply">
+							<div><i class="fa fa-reply"></i>{{text_admin_reply}}</div>
+							{{request.admin_comment}}
+						</div>
+					{% endif %}
+				</div>
+				<div class="col-xs-12"><hr /></div>
+			</div>
+		{% endfor %}
+	{% else %}
+		<p>{{text_no_requests}}</p>
+	{% endif %}
+	<div class="pagination">
+		<div class="text-right">{{pagination}}</div>
+		<div class="text-right"><button class="btn btn-primary" onclick="$('#form-question').slideToggle();">{{button_new_request}}</button></div>
+	</div>
+</div>
+<form class="form-horizontal" id="form-question">
+	{% if request_guest %}
+		<div class="rev_form well well-sm">
+			<div class="form-group required">
+				<div class="col-sm-12">
+					<label class="control-label" for="input-name">{{entry_request_name}}</label>
+					<input type="text" name="name" value="" id="input-username" class="form-control" />
+				</div>
+			</div>
+			{% if show_phone %}
+				<div class="form-group required">
+					<div class="col-sm-12">
+						<label class="control-label" for="input-name">{{entry_request_phone}}</label>
+						<input type="text" name="phone" value="" id="input-phone" class="form-control" />
+					</div>
+				</div>
+			{% endif %}
+			{% if show_email %}
+				<div class="form-group {{show_email_required ? 'required'}} ">
+					<div class="col-sm-12">
+						<label class="control-label" for="input-name">{{entry_request_mail}} {{not show_email_required ? entry_request_mail_required}}</label>
+						<input type="text" name="mail" value="" id="input-mail" class="form-control" />
+					</div>
+				</div>
+			{% endif %}
+			<div class="form-group required">
+				<div class="col-sm-12">
+					<label class="control-label" for="input-request">{{entry_request_text}}</label>
+					<textarea name="comment" rows="5" id="input-request" class="form-control"></textarea>
+					<div class="help-block">{{text_note}}</div>
+				</div>
+			</div>
+			{{show_captcha ? captcha}}
+			{% if text_agree %}
+				<div class="radio text-right clearfix" style="margin:0 0 5px">
+					<label class="input"><input id="confirm" type="checkbox" name="confirm" value="1" /><span></span>{{text_agree}}</label>
+				</div>
+			{% endif %}
+			<div class="text-right clearfix">
+				<button type="button" id="button-request" data-loading-text="{{text_loading}}" class="btn btn-primary">{{button_add_new_request}}</button>
+			</div>
+		</div>
+		<input type="hidden" name="type" value="{{type}}" />
+		<input type="hidden" name="product_id" value="{{product_id}}" />
+		<input type="hidden" name="question_form" value="1" />
+	{% else %}
+		{{text_login}}
+	{% endif %}
+</form>
+<script>
+	if(!$('body').find('.tab-question span').length) {
+		$('body').find('.tab-question').append(' <span>({{requests_total}})</span>');
+	}
+		
+	$('#button-request').on('click', function() {
+		var form = '#form-question';
+		
+		$.ajax({
+			url: 'index.php?route=extension/module/uni_request/mail',
+			type: 'post',
+			data: $(form+' input, '+form+' textarea').serialize(),
+			dataType: 'json',
+			beforeSend: function() {
+				$('#button-request').button('loading');
+			},
+			complete: function() {
+				$('#button-request').button('reset');
+			},
+			success: function(json) {
+				$(form+' .text-danger').remove();
+					
+				if (json['success']) {
+					$(form).before('<div class="alert alert-success"><i class="fa fa-check-circle"></i> '+json['success']+' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+					$(form).slideToggle();
+					$(form+' input, '+form+' textarea').val('');
+					
+					scroll_to('.alert.alert-success');
+				}
+				
+				if (json['error']) {
+					var timer = 0;
+					
+					for (i in json['error']) {
+						form_error(form, i, json['error'][i]);
+						
+						
+					}
+					
+					uniFlyAlert('danger', json['error']);
+					
+				}
+			}
+		});
+	});
+</script>

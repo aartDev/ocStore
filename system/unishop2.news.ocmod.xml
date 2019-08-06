@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+<name>UniShop2 news seo</name>
+<code>UniShop2 news seo</code>
+<version>1.5.2.0</version>
+<author>spectrum</author>
+	<file path="catalog/controller/startup/seo_url.php">
+		<operation error="skip">
+			<search><![CDATA[if ($url[0] == 'information_id') {]]></search>
+			<add position="before"><![CDATA[
+			if ($url[0] == 'news_id') {
+				$this->request->get['news_id'] = $url[1];
+			}
+			
+			if ($url[0] == 'news_category_id') {
+				if (!isset($this->request->get['news_path'])) {
+					$this->request->get['news_path'] = $url[1];
+				} else {
+					$this->request->get['news_path'] .= '_' . $url[1];
+				}
+			}
+			]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[$url[0] != 'information_id']]></search>
+			<add position="replace"><![CDATA[$url[0] != 'news_id' && $url[0] != 'news_category_id' && $url[0] != 'information_id']]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[} elseif (isset($this->request->get['information_id'])) {]]></search>
+			<add position="before"><![CDATA[
+			} elseif (isset($this->request->get['news_id'])) {
+				$this->request->get['route'] = 'information/uni_news_story';
+			} elseif (isset($this->request->get['news_path'])) {
+				$this->request->get['route'] = 'information/uni_news';
+			]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[($data['route'] == 'information/information' && $key == 'information_id')]]></search>
+			<add position="replace"><![CDATA[($data['route'] == 'information/information' && $key == 'information_id') || ($data['route'] == 'information/uni_news_story' && $key == 'news_id')]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[} elseif ($key == 'path') {]]></search>
+			<add position="before"><![CDATA[
+			} elseif ($key == 'news_path') {
+				$categories = explode('_', $value);
+
+				foreach ($categories as $category) {
+					$query = $this->db->query("SELECT * FROM `".DB_PREFIX."seo_url` WHERE `query` = 'news_category_id=".(int)$category."' AND store_id = '".(int)$this->config->get('config_store_id')."' AND language_id = '".(int)$this->config->get('config_language_id')."'");
+
+					if ($query->num_rows && $query->row['keyword']) {
+						$url .= '/' . $query->row['keyword'];
+					} else {
+						$url = '';
+
+						break;
+					}
+				}
+
+				unset($data[$key]);
+			]]></add>
+		</operation>
+    </file>
+	<file path="system/library/seopro.php">
+		<operation>
+			<search><![CDATA['information_id',]]></search>
+			<add position="replace" error="skip"><![CDATA['information_id', 'news_id',]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[} elseif (count($url) > 1) {]]></search>
+			<add position="before" error="skip"><![CDATA[
+			} elseif($url[0] == 'news_category_id'){
+				if (!isset($this->request->get['news_path'])) {
+					$this->request->get['news_path'] = $url[1];
+				} else {
+					$this->request->get['news_path'] .= '_' . $url[1];
+				}]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[$this->request->get['route'] = 'information/information';]]></search>
+			<add position="after" offset="1" error="skip"><![CDATA[
+			if(isset($this->request->get['news_id'])) {
+				if(isset($this->request->get['news_path'])) {
+					unset($this->request->get['news_path']);
+				}
+				
+				$news_path = $this->getPathByUniNewsStory($this->request->get['news_id']);
+					
+				if ($news_path) {
+					$this->request->get['news_path'] = $news_path;
+				}
+			
+				$this->request->get['route'] = 'information/uni_news_story';
+				
+			} elseif(isset($this->request->get['news_path'])){
+				$this->request->get['route'] = 'information/uni_news';
+			}
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[case 'path':]]></search>
+			<add position="before" error="skip"><![CDATA[
+			case 'news_path':
+				$news_categories = explode('_', $value);
+				foreach ($news_categories as $news_category_id) {
+					$queries[] = 'news_category_id='.(int)$news_category_id;
+				}
+				unset($data[$key]);
+				break;
+					
+			case 'news_id':
+				$news_id = (int)$value;
+				$queries[] = 'news_id='.(int)$news_id;
+				$postfix = true;
+				unset($data[$key]);
+				break;
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[case 'product/category':]]></search>
+			<add position="before" error="skip"><![CDATA[
+			case 'information/uni_news_story':
+				if (isset($data['news_id'])) {
+					$news_id = $data['news_id'];
+					
+					unset($data);
+					
+					if ($this->config->get('config_seo_url_include_path')) {
+						$data['news_path'] = $this->getPathByUniNewsStory($news_id);
+					}	
+					
+					$data['news_id'] = $news_id;
+				}
+				break;
+				
+			case 'information/uni_news':
+				if (isset($data['news_path'])) {
+					$category = explode('_', $data['news_path']);
+					$category = end($category);
+					$data['news_path'] = $this->getPathByUniNewsCategory($category);
+				}
+				break;
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[private function getPathByCategory]]></search>
+			<add position="before" error="skip"><![CDATA[
+			private function getPathByUniNewsStory($news_id) {
+				$news_id = (int)$news_id;
+			
+				if ($news_id < 1) return false;
+				
+				$cache_name = 'unishop.news.story';
+		
+				$path = $this->config->get('config_seo_url_cache') ? $this->cache->get($cache_name) : [];
+		
+				if (!isset($path[$news_id])) {
+					$query = $this->db->query("SELECT category_id FROM `".DB_PREFIX."uni_news_story_to_category` WHERE news_id = '".$news_id."' ORDER BY category_id DESC LIMIT 1");
+					$path[$news_id] = $this->getPathByUniNewsCategory($query->num_rows ? (int)$query->row['category_id'] : 0);
+			
+					if($this->config->get('config_seo_url_cache')) {
+						$this->cache->set($cache_name, $path);
+					}
+				}
+		
+				return $path[$news_id];
+			}
+
+			private function getPathByUniNewsCategory($category_id) {
+				$category_id = (int)$category_id;
+				
+				if($category_id < 1) return false;
+				
+				$cache_name = 'unishop.news.category';
+		
+				$path = $this->config->get('config_seo_url_cache') ? $this->cache->get($cache_name) : [];
+				
+				if (!isset($path[$category_id])) {			
+					$level = 10;
+
+					$sql = "SELECT CONCAT_WS('_'";
+				
+					for ($i = $level-1; $i >= 0; --$i) {
+						$sql .= ",t$i.category_id";
+					}
+				
+					$sql .= ") AS path FROM `".DB_PREFIX."uni_news_category` t0";
+				
+					for ($i = 1; $i < $level; ++$i) {
+						$sql .= " LEFT JOIN `".DB_PREFIX."uni_news_category` t$i ON (t$i.category_id = t".($i-1).".parent_id)";
+					}
+				
+					$sql .= " WHERE t0.category_id = '".$category_id."'";
+
+					$query = $this->db->query($sql);				
+					$path[$category_id] = $query->num_rows ? $query->row['path'] : false;
+			
+					if($this->config->get('config_seo_url_cache')) {
+						$this->cache->set($cache_name, $path);
+					}
+				}
+		
+				return $path[$category_id];
+			}
+			]]></add>
+		</operation>
+    </file>
+</modification>

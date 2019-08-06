@@ -1,0 +1,91 @@
+<ul class="nav nav-tabs">
+	{% for key, tab in tabs %}
+		{% if tab.products %}
+			<li {{key == 0 ? 'class="active"'}}><a href="#{{key}}-{{module}}" data-toggle="tab">{{tab.title}}</a></li>
+		{% endif %}
+	{% endfor %}
+</ul>
+<div class="tab-content">
+	{% for key, tab in tabs %}
+		<div id="{{key}}-{{module}}" class="tab-pane {{key == 0 ? 'active'}}">	
+			{% if tab.products %}
+				<div class="uni-module product-{{key}}-{{module}}">
+					<div class="uni-module-wrapper">
+						{% for product in tab.products %}
+							<div class="product-thumb">
+								<div class="image" {{product.special_date_end ? 'data-special-end="'~product.special_date_end~'"'}}>
+									{% include 'unishop2/template/extension/module/uni_stickers.twig' %}
+									<a href="{{product.href}}">
+										<img src="{{product.thumb}}" {{product.additional_image ? 'data-additional="'~product.additional_image~'"'}} alt="{{product.name}}" title="{{product.name}}" class="img-responsive" />
+									</a>
+								</div>
+								<div class="caption">
+									<a href="{{product.href}}">{{product.name}}</a>
+									{% if product.show_description %}
+										<p class="description">{{product.description}}</p>
+									{% endif %}
+									{% include 'unishop2/template/extension/module/uni_attributes.twig' %}
+									{% include 'unishop2/template/extension/module/uni_options.twig' %}
+									{% include 'unishop2/template/extension/module/uni_quantity_indicator.twig' %}
+									{% if product.rating >= 0 and show_rating %}
+										<div class="rating">
+											{% for i in 1..5 %}<i class="{{product.rating < i ? 'far' : 'fa'}} fa-star"></i>{% endfor %} 
+											{% if product.num_reviews > 0 %}<sup><a onclick="location='{{product.href}}#tab-review'">{{product.num_reviews}}</a></sup>{% endif %}
+										</div>
+									{% endif %}
+									{% if product.price %}
+										<p class="price" data-price="{{product.price_value}}" data-special="{{product.special_value}}" data-discount="{{product.discounts}}">
+											{% if product.special %}
+												<span class="price-old">{{ product.price }}</span> <span class="price-new">{{ product.special }}</span> 
+											{% else %}
+												{{ product.price }}
+											{% endif %}
+											{% if product.tax %}<span class="price-tax">{{text_tax}} {{product.tax}}</span>{% endif %}
+										</p>
+									{% endif %}
+								</div>
+								<div class="cart {{product.cart_btn_class}}">
+									{% if product.show_quantity %}
+										<div class="quantity">
+											<input type="text" name="quantity" value="{{product.minimum}}" data-minimum="{{product.minimum}}" class="form-control" />
+											<span>
+												<i class="fa fa-plus btn btn-default"></i>
+												<i class="fa fa-minus btn btn-default"></i>
+											</span>
+										</div>
+									{% endif %}
+									<button type="button" class="add_to_cart btn {{product.cart_btn_class}} {{product.product_id}}" onclick="cart.add({{product.product_id}}, this)"><i class="{{product.cart_btn_icon}}"></i><span class="hidden-sm hidden-md">{{product.cart_btn_text}}</span></button>
+									<button type="button" class="quick_order btn {{not product.quick_order ? 'hidden'}}" data-toggle="tooltip" title="{{quick_order_title}}" onclick="quick_order('{{product.product_id}}');"><i class="{{quick_order_icon}}"></i>{% if show_quick_order_text %}<span class="hidden-sm hidden-md">{{quick_order_title}}</span>{% endif %}</button>
+									<button type="button" class="wishlist btn {{wishlist_btn_disabled ? 'hidden'}}" data-toggle="tooltip" title="{{button_wishlist}}" onclick="wishlist.add('{{product.product_id}}');"><i class="fa fa-heart"></i></button>
+									<button type="button" class="compare btn {{compare_btn_disabled ? 'hidden'}}" data-toggle="tooltip" title="{{button_compare}}" onclick="compare.add('{{product.product_id}}');"><i class="fas fa-align-right"></i></button>
+								</div>
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+				<script>	
+					$('.product-{{key}}-{{module}}').uniModules({
+						type:'{{tab.type ? tab.type : 'carousel'}}',
+						autoheight:['caption > a', 'description', 'option'],
+						loop:{{tab.products|length > 5 ? 'true' : 'false'}}
+					});
+					
+					{% if tab.show_timer %}
+						$('.product-{{key}}-{{module}} .image').each(function() {
+							var date = $(this).attr('data-special-end');
+			
+							if(date) {
+								$(this).uniTimer({
+									date      :''+date+'',
+									texts     :['{{text_special_day}}','{{text_special_hour}}','{{text_special_min}}','{{text_special_sec}}'],
+									hideText  :false,
+									hideIsNull:false
+								});
+							}
+						});
+					{% endif %}
+				</script>
+			{% endif %}
+		</div>
+	{% endfor %}
+</div>

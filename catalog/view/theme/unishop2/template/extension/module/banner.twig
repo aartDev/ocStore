@@ -1,0 +1,29 @@
+<div id="banner{{module}}" class="banner owl-carousel">
+	{% for banner in banners %}
+		<div class="item text-center">
+			{% if banner.link %}
+				<a href="{{banner.link}}" title="{{banner.title}}" class="image-after">
+					<img src="{{banner.image}}" alt="{{banner.title}}" class="img-responsive" />
+					<div class="btn btn-primary">{{banner.title}}</div>
+				</a>
+			{% else %}
+				<div class="image-after">
+					<img src="{{banner.image}}" alt="{{banner.title}}" title="{{banner.title}}" class="img-responsive" />
+				</div>
+			{% endif %}
+		</div>
+	{% endfor %}
+</div>
+{% if banners|length > 0 %}
+	<script>
+	$('#banner{{module}}').owlCarousel({
+		items:1,
+		nav:false,
+		loop:true,
+		autoplay:true,
+		autoplayTimeout:3000,
+		autoplayHoverPause:true,
+		navText: ['<i class="fa fa-chevron-left"></i>', '<i class="fa fa-chevron-right"></i>'],
+	});
+	</script>
+{% endif %}

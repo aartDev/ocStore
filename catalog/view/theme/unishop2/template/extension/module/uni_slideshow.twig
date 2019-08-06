@@ -1,0 +1,35 @@
+<div id="uni-slideshow-{{module}}" class="uni-slideshow owl-carousel {{hide ? 'hidden-xs'}}">
+	{% for banner in banners %}
+		<div class="item">
+			<div class="image col-xs-12 {{banner.title or banner.text or banner.button ? 'col-sm-6' : 'col-sm-12'}}">
+				{{ banner.link ? '<a href="'~banner.link~'">' : '<span>' }}
+				<img src="{{banner.image}}" alt="{{banner.title}}" class="img-responsive" />
+				{{ banner.link ? '</a>' : '</span>' }}
+			</div>
+			{% if banner.title or banner.text or banner.button %}
+				<div class="description col-xs-12 col-sm-6">
+					<h4 class="title">{{banner.title}}</h4>
+					<p class="text">{{banner.text}}</p>
+					<button class="btn" onclick="location='{{banner.link}}'">{{banner.button}}</button>
+				</div>
+			{% endif %}
+		</div>
+	{% endfor %}
+</div>
+<script>
+var hide = {{hide ? 'true' : 'false'}};
+
+if(!hide || hide && $(window).width() > 767) {
+	$('#uni-slideshow-{{module}}').owlCarousel({
+		items:1,
+		autoplay:true,
+		animateIn:'{{effect_in}}',
+		animateOut:'{{effect_out}}',
+		autoplayTimeout:{{delay > 0 ? delay*1000 : 5000}},
+		autoplayHoverPause:true,
+		nav:true,
+		loop:true,
+		navText: ['<i class="fa fa-chevron-left"></i>', '<i class="fa fa-chevron-right"></i>'],
+	});
+}
+</script>

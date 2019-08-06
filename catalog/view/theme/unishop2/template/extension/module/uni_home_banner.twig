@@ -1,0 +1,33 @@
+{% if home_banners %}
+	{% if home_banners|length == 4 %}
+		{% set class = 'col-xs-12 col-sm-6 col-md-3' %}
+	{% elseif home_banners|length == 3 %}
+		{% set class = 'col-sm-4 col-md-4' %}
+	{% elseif home_banners|length == 2 %}
+		{% set class = 'col-sm-6 col-md-6' %}
+	{% elseif home_banners|length == 1 %}
+		{% set class = 'col-sm-12 col-md-12' %}			
+	{% endif %}
+	<div class="home_banners row">
+		{% for home_banner  in home_banners %}
+			<div class="{{class}} {{home_banner.hide ? 'hidden-xs'}}">
+				{% if home_banner.link %}
+					<div class="item has_link animate-hover" {% if home_banner.link_popup %}onclick="uniBannerLink('{{home_banner.link}}')"{% else %}onclick="location='{{home_banner.link}}'"{% endif %}>
+				{% else %}
+					<div class="item animate-hover">
+				{% endif %}
+				{% if home_banner.icon %}
+					<div class="icon"><i class="{{home_banner.icon}}"></i></div>
+				{% endif %}
+				<div class="text">
+					<strong>{{home_banner.text}}</strong>
+					{{ home_banner.text1 }}
+				</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+	<script>
+		autoheight('.home_banners .item');
+	</script>
+{% endif %} 

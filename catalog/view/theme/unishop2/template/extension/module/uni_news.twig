@@ -1,0 +1,44 @@
+{% if news %}
+	{% if heading_title %}<div class="heading"><span>{{ heading_title }}</span></div>{% endif %}
+	<div class="uni-module news-module news-{{ module }}">
+		<div class="uni-module-wrapper">
+			{% for news in news %}
+				<div class="news">
+					<div class="row">
+						{% if news.image %}
+							<div class="image col-xs-12 col-sm-5 col-lg-4 col-xxl-9">
+								<a onclick="location='{{ news.href }}'" title="{{ news.name }}">
+									<img src="{{ news.image }}" alt="{{ news.name }}" class="img-responsive" />
+								</a>
+							</div>
+						{% endif %}
+						<div class="col-xs-12 col-sm-7 col-lg-8 col-xxl-11">
+							<div class="name"><a href="{{ news.href }}" title="{{ news.name }}">{{ news.name }}</a></div>
+							<p class="description">
+								{{ news.description }}
+							</p>
+						</div>
+					</div>
+					<div class="row">
+						<div class="category_name col-xs-5 col-sm-5 col-lg-4 col-xxl-9">
+							{{  news.category_name  }}
+						</div>
+						<div class="posted">
+							<i class="fa fa-calendar"></i>{{ news.posted }}
+							<i class="fa fa-eye"></i>{{ news.viewed }}
+							<a onclick="location='{{ news.href }}'" class="hidden-xs"><i class="fa fa-long-arrow-alt-right" title="{{ text_more }}" data-toggle="tooltip"></i></a>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+	<script>
+		$('.news-{{ module }}').uniModules({
+			type:'{{ type_view is defined ? type_view : 'carousel' }}',
+			items: {0:{items:1},580:{items:2},720:{items:2},1050:{items:2},1400:{items:3 }},
+			autoheight:['name', 'description'],
+			loop:{{ news|length > 3 ? 'true' : 'false' }}
+		});
+	</script>
+{% endif %}

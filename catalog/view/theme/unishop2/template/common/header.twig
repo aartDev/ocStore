@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html dir="{{ direction }}" lang="{{ lang }}">
+<head>
+<title>{{ title }}</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<base href="{{ base }}" />
+{% if show_meta_robots %}
+<meta name="robots" content="noindex, follow" />
+{% endif %}
+{% if description %}
+<meta name="description" content="{{ description }}" />
+{% endif %}
+{% if keywords %}
+<meta name="keywords" content="{{ keywords }}" />
+{% endif %}
+<meta property="og:title" content="{{ title }}" />
+<meta property="og:type" content="website" />
+{% if og_url%}
+<meta property="og:url" content="{{ og_url }}" />
+{% endif %}
+{% if og_image %}
+<meta property="og:image" content="{{ og_image }}" />
+{% else %}
+<meta property="og:image" content="{{ logo }}" />
+{% endif %}
+<meta property="og:site_name" content="{{ name }}" />
+<meta name="theme-color" content="#{{ theme_color }}">
+{% for link in links %}
+<link href="{{ link.href }}" rel="{{ link.rel }}" />
+{% endfor %}
+{% if uni_merged_css %}
+	<link href="catalog/view/theme/unishop2/stylesheet/{{ uni_merged_css }}.css?v=1.5.2.0" rel="preload" as="style" />
+	<link href="catalog/view/theme/unishop2/stylesheet/{{ uni_merged_css }}.css?v=1.5.2.0" rel="stylesheet" media="screen" />
+{% else %}
+	<link href="catalog/view/theme/unishop2/stylesheet/bootstrap.min.css" rel="stylesheet" media="screen" />
+	<link href="catalog/view/theme/unishop2/stylesheet/stylesheet.css?v=1.5.2.0" rel="stylesheet" media="screen" />
+	<link href="catalog/view/theme/unishop2/stylesheet/font-awesome.min.css" rel="stylesheet" media="screen" />
+	<link href="catalog/view/theme/unishop2/stylesheet/userstyle-{{ store_id }}.css?{{ save_date }}" rel="stylesheet" media="screen" />
+	<link href="catalog/view/theme/unishop2/stylesheet/animate.css" rel="stylesheet" media="screen" />
+	{% for style in styles %}
+		<link href="{{ style.href }}" rel="{{ style.rel }}" media="{{ style.media }}" />
+	{% endfor %}
+{% endif %}
+
+{% if custom_style %}
+	<link href="catalog/view/theme/unishop2/stylesheet/{{ custom_style }}" rel="stylesheet" media="screen" />
+{% endif %}
+<script>var default_view = '{{ default_view }}';</script>
+{% if uni_merged_js %}
+	<link href="catalog/view/theme/unishop2/js/{{ uni_merged_js }}.js" rel="preload" as="script" />
+	<script src="catalog/view/theme/unishop2/js/{{ uni_merged_js }}.js"></script>
+{% else %}
+	<script src="catalog/view/theme/unishop2/js/jquery-2.1.1.min.js"></script>
+	<script src="catalog/view/theme/unishop2/js/bootstrap.min.js"></script>
+	<script src="catalog/view/theme/unishop2/js/common.js"></script>
+	<script src="catalog/view/theme/unishop2/js/owl.carousel.min.js"></script>
+	<script src="catalog/view/theme/unishop2/js/menu-aim.min.js"></script>
+	{% for script in scripts %}
+		<script src="{{ script }}"></script>
+	{% endfor %}
+{% endif %}
+{% if user_js %}
+<script>{{ user_js }}</script>
+{% endif %}
+{% for analytic in analytics %}
+	{{ analytic }}
+{% endfor %}
+<noscript><style>.uni-module .uni-module-wrapper{opacity:1}</style></noscript>
+</head>
+<body class="{{ class }}">
+	<header>
+		<div id="top">
+			<div class="container">
+				<div class="pull-right">
+					<div id="account" class="btn-group">
+						<button class="btn btn-link dropdown-toggle" data-toggle="dropdown">
+							<i class="fa fa-user"></i><span class="hidden-xs">{{ logged ? customer_name : text_account }}</span><i class="fa fa-caret-down"></i>
+						</button>
+						<ul class="dropdown-menu dropdown-menu-right">
+							{% if logged %}
+								<li><a href="{{ account }}">{{ text_account }}</a></li>
+								<li><a href="{{ order }}">{{ text_order }}</a></li>
+								<li><a href="{{ transaction }}">{{ text_transaction }}</a></li>
+								<li><a href="{{ download }}">{{ text_download }}</a></li>
+								<li><a href="{{ logout }}">{{ text_logout }}</a></li>
+							{% else %}
+								<li><a {% if show_register %}onclick="uniRegisterOpen();"{% else %} href="{{ register }}" {% endif %}>{{ text_register }}</a></li>
+								<li><a {% if show_login %}onclick="uniLoginOpen();"{% else %} href="{{ login }}"{% endif %}>{{ text_login }}</a></li>
+							{% endif %}
+						</ul>
+					</div>
+				</div>
+				{{ language }}
+				{{ currency }}
+				{% if search_mob_hide %}
+					<div class="pull-right visible-xs">
+						<div class="btn-group">
+							<button class="btn btn-link" onclick="$('#search').toggleClass('show'); $('#search input[name=\'search\']').focus();">
+								<i class="fa fa-search"></i><i class="fa fa-caret-down"></i>
+							</button>
+						</div>
+					</div>
+				{% endif %}
+				{% if headerlinks %}
+					<div class="pull-left">
+						<div id="top-links" class="btn-group">
+							<button class="btn btn-link dropdown-toggle" data-toggle="dropdown">
+								<i class="fa fa-info"></i><i class="fa fa-caret-down"></i>
+							</button>
+							<ul class="dropdown-menu dropdown-menu-left">
+								{% for headerlink in headerlinks %}
+									<li><a href="{{ headerlink.link }}" title="{{ headerlink.title }}">{{ headerlink.title }}</a></li>
+								{% endfor %}
+							</ul>
+						</div>
+					</div>
+				{% endif %}
+			</div>
+		</div>
+		<div class="container">
+			<div class="first-row row">
+				<div class="col-xs-12 col-sm-6 col-md-3 col-xxl-4">
+					<div id="logo">
+						{% if logo %}
+							{% if og_url is defined and home == og_url %}
+								<img src="{{ logo }}" title="{{ name }}" alt="{{ name }}" class="img-responsive" />
+							{% else %}
+								<a href="{{ home }}"><img src="{{ logo }}" title="{{ name }}" alt="{{ name }}" class="img-responsive" /></a>
+							{% endif %}
+						{% else %}
+							{% if og_url is defined and home == og_url %}
+								<span>{{ shop_name }}</span>
+							{% else %}
+								<a href="{{ home }}">{{ shop_name }}</a>
+							{% endif %}
+						{% endif %}
+					</div>
+				</div>
+				<div class="col-xs-9 col-sm-4 col-md-3 col-xxl-4 {{ search_phone_change ? '' : 'col-md-push-5 col-xxl-push-10' }}">
+					<div id="phone">
+						<div class="phone {{ main_phones|length == 1 ? 'padding' }}">
+							<span class="main-phone" {{ main_phones[0].href ? 'onclick="location=\''~main_phones[0].href~'\'"' }}>{{ telephone }}</span>
+							{{ phones or text_in_add_contacts ? '<i class="show-phone dropdown-toggle fas fa-chevron-circle-down" data-toggle="dropdown"></i>' }}
+							{% if phones or text_in_add_contacts %}
+							<ul class="dropdown-menu dropdown-menu-right">
+								{% if callback %}
+									<li><a onclick="uniRequestOpen();" class="open_callback">{{ text_header_callback }} {{ text_header_callback1 }}</a></li>
+								{% endif %}
+								{% if text_in_add_contacts_position and text_in_add_contacts %}
+									<li class="text"><hr style="margin-top:0px;" />{{ text_in_add_contacts }}<hr style="margin-bottom:5px;" /></li>
+								{% endif %}
+								{% for phone in phones %}
+									<li>
+										<a {{ phone.href ? 'href="'~phone.href~'"' }}>
+											{% if phone.icon and 'fa-' in phone.icon %}
+												<i class="{{ phone.icon }}"></i>
+											{% elseif phone.icon %}
+												<img src="image/{{ phone.icon }}" alt="" />
+											{% endif %}
+											<span>{{ phone.number }}</span>
+										</a>
+									</li>
+								{% endfor %}
+								{% if not text_in_add_contacts_position and text_in_add_contacts %}
+									<li class="text"><hr style="margin-top:5px" />{{ text_in_add_contacts }}</li>
+								{% endif %}
+							</ul>
+							{% endif %}
+						</div>
+						{% if main_phones|length > 1 %}
+							<div class="additional-phone {{ phones is empty and text_in_add_contacts is empty ? 'margin-0' }}">
+								{% for key, phone in main_phones %}
+									<span {{ key == 0 ? 'class="selected"' }} {{ phone.href ? 'data-href="'~phone.href~'"' }} data-phone="{{ phone.number }}">
+									{% if phone.icon and 'fa-' in phone.icon %}
+										<i class="{{ phone.icon }}" data-toggle="tooltip" data-placement="left" title="{{ phone.text }}"></i>
+									{% elseif phone.icon %}
+										<img src="image/{{ phone.icon }}" alt="" data-toggle="tooltip" data-placement="left" title="{{ phone.text }}" />
+									{% else %}
+										{{ phone.text }}
+									{% endif %}
+									</span>
+								{% endfor %}
+							</div>
+						{% endif %}
+					</div>
+				</div>
+				<div class="col-xs-3 col-sm-2 col-md-1 col-xxl-2 col-md-push-5 col-xxl-push-10">{{ cart }}</div>
+				<div id="search" class="col-xs-12 col-sm-6 col-md-5 col-lg-5 col-xxl-10 {{ search_phone_change ? 'col-md-pull-1 col-xxl-pull-2' : 'col-md-pull-4 col-xxl-pull-6' }} hidden-sm {{ search_mob_hide ? 'mobhide' }}">
+					{{ search }}
+					{% if search_phrase %}
+						<div id="search_phrase" class="hidden-xs hidden-sm">
+							{{ text_search_phrase }}<a>{{ search_phrase }}</a>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+		<div id="main-menu" class="container">
+			<div class="row">
+				{{ menu }}
+				<div id="search2" class="col-xs-12 col-sm-6 col-md-5 visible-sm"></div>
+				<script>
+					//$(function() {
+						$('#search .search').clone().appendTo('#search2');  
+					//});
+				</script>
+			</div>
+		</div>
+	</header>
+	<main>

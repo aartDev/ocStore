@@ -1,0 +1,7 @@
+{% if product.quantity_indicator %}
+	<div class="stock-indicator status-{{product.quantity_indicator['items']}}" data-text="{{text_stock_indicator}}">
+		<div data-toggle="tooltip" title="{{product.quantity_indicator['title']}}">
+			{% for i in 1..5 %}<span class="{{product.quantity_indicator['items'] < i ? 'empty' : 'full'}}"></span>{% endfor %}
+		</div>
+	</div>
+{% endif %}

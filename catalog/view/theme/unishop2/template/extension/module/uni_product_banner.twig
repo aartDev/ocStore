@@ -1,0 +1,26 @@
+{% if product_banners %}
+	<div id="product-banners" class="row">
+		{% if product_banner_position == 1 %}
+			{% set class = 'col-xs-6 col-sm-4 col-md-4 col-lg-12' %}
+		{% elseif product_banner_position == 2 %}
+			{% set class = 'col-xs-6 col-sm-6 col-md-6 col-lg-4' %}
+		{% else %}
+			{% set class = 'col-xs-6 col-sm-4 col-md-2 col-lg-2' %}
+		{% endif %}
+		{% for banner in product_banners %}
+			<div class="{{class}} {{banner.hide ? 'hidden-xs'}}">
+				{% if banner.link %}
+					<div class="item has_link animate-hover" {% if banner.link_popup %}onclick="uniBannerLink('{{banner.link}}')"{% else %}onclick="location='{{banner.link}}'"{% endif %}>
+				{% else %}
+					<div class="item animate-hover">
+				{% endif %}
+				<i class="{{banner.icon}} fa-fw"></i>
+				<span><span>{{banner.text}}</span></span>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+	<script>
+		autoheight('#product-banners .item');
+	</script>
+{% endif %}

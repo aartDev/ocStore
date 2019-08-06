@@ -1,0 +1,37 @@
+{% if show_login %}
+	<div id="modal-login-form" class="modal">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">{{text_login}}</h4>
+				</div>
+				<div class="modal-body">
+					<form name="popuplogin">
+						<input type="text" name="email" value="" placeholder="{{login_mail_text}}" class="form-control" />
+						<input type="password" name="password" value="" placeholder="{{login_password_text}}" class="form-control" />
+					</form>
+					<div class="row">
+						<div class="col-xs-12">
+							<button class="login_button btn btn-primary" onclick="uniLoginSend();" data-loading-text="{{text_loading}}">{{text_login2}}</button>
+						</div>
+						{% if show_login_forgotten %}
+							<div class="{{show_login_register ? 'col-xs-6': 'col-xs-12'}}">
+								<a href="index.php?route=account/forgotten">{{text_forgotten}}</a>
+							</div>
+						{% endif %}
+						{% if show_login_register %}
+							<div class="{{show_login_forgotten ? 'col-xs-6': 'col-xs-12'}}">
+								{% if show_register %}
+									<a data-dismiss="modal" onclick="uniRegisterOpen();">{{text_register2}}</a>
+								{% else %}
+									<a href="{{register_link}}">{{text_register2}}</a>
+								{% endif %}
+							</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endif %}

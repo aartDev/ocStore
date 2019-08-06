@@ -1,0 +1,26 @@
+#quick_order a{text-decoration:underline}
+#quick_order .image{position:relative;margin-bottom:15px}
+#quick_order .image .product_sticker {left:18px}
+#quick_order .image-additional{display:none;position:absolute;z-index:20;margin-top:-1px;left:10px;right:10px;max-width:100%;padding:10px 0 5px;background:#f5f5f5;border-radius:0 0 4px 4px}
+#quick_order .image:hover .image-additional{display:block}
+#quick_order .image-additional div{padding:0 5px 10px}
+#quick_order .image-additional img{padding:4px;border:solid 1px #ddd;background:#fff;border-radius:3px}
+#quick_order .row_input div{margin:0 0 10px}
+#quick_order .quantity {display:inline-block;vertical-align:middle}
+#quick_order .quantity input {height:34px;}
+#quick_order .quantity .btn{height:17px;line-height:17px}
+#quick_order .special-timer .heading {font-size:1em;font-weight:500;margin:0 0 5px}
+#quick_order .special-timer .heading span:after{display:none}
+#quick_order .col-sm-6 {font-size:.95em}
+#quick_order .stock-indicator {margin:2px 0 0;color:inherit}
+#quick_order .price{margin:10px 0;font-size:1.6em;font-weight:500}
+#quick_order .attribute, #quick_order .description, #quick_order .option {overflow:hidden;margin:0 0 15px}
+#quick_order .form-group {clear:both;margin:0 -10px}
+#quick_order .text-danger {margin:0 !important}
+#quick_order .radio{display:inline-block;margin:0 10px 10px 0;}
+#quick_order .radio label{margin:0;padding:0}
+#quick_order .form-group > label{margin:0 0 5px;font-size:.95em;font-weight:500;}
+#quick_order .option label > span{height:26px;line-height:24px;padding:0 10px}
+#quick_order .option .option-image img {width:30px}
+#quick_order .alert-info{background:none;border:none;margin:10px 0 0;padding:0;font-size:0.8em;line-height:10px;font-weight:500;color:#888}
+#quick_order .discount span{display:inline-block;margin:0 10px 5px 0 !important;padding:0 10px;font-size:.8em !important;font-weight:400 !important;color:#666;border-radius:3px;background:rgba(0, 0, 0, .05)}

@@ -1,0 +1,10 @@
+.uni-category-wall .item {position:relative;margin-bottom:20px}
+.uni-category-wall .item.childs .image, .uni-category-wall .item.childs .image:after {border-radius:4px 4px 0 0}
+.uni-category-wall .btn{position:absolute;left:0;bottom:10px;height:auto;padding:5px 10px;line-height:1em;font-size:.9em;opacity:.85;white-space:normal;cursor:default;border-radius:0}
+.uni-category-wall .btn:after{position:absolute;display:block;top:0;right:-5px;content:'';width:10px;height:100%;transform:skew(25deg);background:inherit}
+.uni-category-wall .item div{margin:0;padding:10px 5px 8px 10px;background:rgba(0, 0, 0, .02);border:solid 1px rgba(0, 0, 0, .05);border-top:0;border-radius:0 0 4px 4px}
+.uni-category-wall .item ul {margin:0 0 6px;padding:0;list-style:none;}
+.uni-category-wall .item ul li{margin:0 0 5px;padding:0 0 0 10px;line-height:1.2em;font-size:.9em}
+.uni-category-wall .item ul li a:before{position:absolute;margin:0 0 0 -12px;font-family:Font Awesome\ 5 Free;font-weight:900;font-size:.9em;opacity:.6;content:"\f105"}
+.uni-category-wall .item div > a span {font-size:.8em;font-weight:500;text-decoration:underline;opacity:.8}
+.uni-category-wall .item div > a:after {content:"\2192\A0";padding:0 0 0 10px}

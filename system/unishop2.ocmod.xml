@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+<name>UniShop2</name>
+<code>UniShop2</code>
+<version>1.5.2.0</version>
+<author>spectrum</author>
+	<file path="catalog/controller/common/{column_left,column_right}.php">
+		<operation>
+			<search><![CDATA[return $this->load->view]]></search>
+			<add position="before" error="skip"><![CDATA[
+			$data['route'] = $route;
+			
+			$uniset = $this->config->get('config_unishop2');
+			$menu_schema = isset($uniset['menu_schema']) ? $uniset['menu_schema'] : [];
+			$data['menu_expanded'] = ($uniset['menu_type'] == 1 && in_array($route, $menu_schema)) ? true : false;
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/common/header.php">
+		<operation>
+			<search><![CDATA[return $this->load->view]]></search>
+			<add position="before" error="skip"><![CDATA[
+			$data = array_merge($data, $this->load->controller('extension/module/uni_new_data', ['type' => 'header']));
+			]]></add>
+		</operation>		
+	</file>
+	<file path="catalog/controller/common/menu.php">	
+		<operation>
+			<search><![CDATA[public function index() {]]></search>
+			<add position="after" error="skip"><![CDATA[
+				$uniset = $this->config->get('config_unishop2');
+				$lang_id = (int)$this->config->get('config_language_id');
+				$cat_arr = isset($this->request->get['path']) ? explode('_', (string)$this->request->get['path']) : [];
+				$cat_id = !isset($this->request->get['product_id']) && isset($uniset['menu_links_disabled']) ? (int)array_pop($cat_arr) : '';
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[$category['name'],]]></search>
+			<add position="after" error="skip"><![CDATA[
+			'icon' 		=> isset($uniset[$lang_id]['main_category_icons'][$category['category_id']]) ? $uniset[$lang_id]['main_category_icons'][$category['category_id']] : '',
+			'disabled'	=> $category['category_id'] == $cat_id ? true : false,
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[// Level 1]]></search>
+			<add position="replace" offset="-6" error="skip"><![CDATA[		
+					$children2 = $this->model_catalog_category->getCategories($child['category_id']);
+					
+					$children_data2 = [];
+			
+					foreach ($children2 as $child2) {
+						if(isset($uniset['menu_links_show']) ? $child2['top'] : 1) {
+							$children_data2[] = array(
+								'name'  		=> $child2['name'],
+								'category_id'	=> $child2['category_id'],
+								'disabled'		=> $child2['category_id'] == $cat_id ? true : false,
+								'href'  		=> $this->url->link('product/category', 'path='.$category['category_id'].'_'.$child['category_id'].'_'.$child2['category_id']),
+							);
+						}
+					}
+			
+					if(isset($uniset['menu_links_show']) ? $child['top'] : 1) {
+						$children_data[] = array(
+							'name'       	=> $child['name'],
+							'category_id'	=> $child['category_id'],
+							'disabled'		=> $child['category_id'] == $cat_id ? true : false,
+							'children'   	=> $children_data2,
+							'href'        	=> $this->url->link('product/category', 'path='.$category['category_id'].'_'.$child['category_id']),
+						);
+					}
+				}
+				
+				// Level 1
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[return $this->load->view]]></search>
+			<add position="before" error="skip"><![CDATA[
+			$data = array_merge($data, $this->load->controller('extension/module/uni_new_data', ['type' => 'menu']));
+			
+			if($data['additional_link']) {
+				$data['categories'] = array_merge($data['categories'], $data['additional_link']);
+			}
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/information/contact.php">
+		<operation>
+			<search><![CDATA[$this->response->setOutput($this->load->view('information/contact', $data));]]></search>
+			<add position="before" error="skip"><![CDATA[
+			$this->load->language('extension/module/uni_othertext');
+			$data = array_merge($data, $this->load->controller('extension/module/uni_new_data', ['type' => 'contact']));
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/checkout/cart.php">
+		<operation>
+			<search><![CDATA[public function index() {]]></search>
+			<add position="after" error="skip"><![CDATA[
+			$uniset = $this->config->get('config_unishop2');
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA['checkout/checkout']]></search>
+			<add position="replace" error="skip"><![CDATA[isset($uniset['show_checkout']) ? 'checkout/uni_checkout' : 'checkout/checkout'
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[if ($product_info) {]]></search>
+			<add position="after" error="skip"><![CDATA[
+			$this->load->model('tool/image');
+			$success_image = $product_info['image'] ? $this->model_tool_image->resize($product_info['image'], 100, 100) : '';
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[$json['redirect']]]></search>
+			<add position="before" offset="1" error="skip"><![CDATA[
+			$uniset = $this->config->get('config_unishop2');
+			$this->load->language('extension/module/uni_othertext');
+			$json['success'] = sprintf($this->language->get('text_success_new'), $success_image, $json['success'], $this->url->link(isset($uniset['show_checkout']) ? 'checkout/uni_checkout' : 'checkout/cart', '', true));
+			
+			$product_info['quantity'] = $quantity;
+			$product_info['option'] = $option;
+			$product_info['options'] = $product_options;
+			$product_info['type'] = 'cart';
+			
+			$json['products'] = $this->load->controller('extension/module/uni_new_data', $product_info);
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/common/cart.php">
+		<operation>
+			<search><![CDATA[$data['text_items']]]></search>
+			<add position="before" error="skip"><![CDATA[
+			$data['items'] = $this->cart->countProducts() + (isset($this->session->data['vouchers']) ? count($this->session->data['vouchers']) : 0);
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[$product['cart_id'],]]></search>
+			<add position="after" error="skip"><![CDATA['product_id' => $product['product_id'],]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[public function index() {]]></search>
+			<add position="after" error="skip"><![CDATA[
+			$uniset = $this->config->get('config_unishop2');
+			$data['uni_checkout_href'] = isset($uniset['show_checkout']) ? $this->url->link('checkout/uni_checkout', '', true) : '';
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/common/footer.php">
+		<operation>
+			<search><![CDATA[return $this->load->view]]></search>
+			<add position="before" error="skip"><![CDATA[
+			$data = array_merge($data, $this->load->controller('extension/module/uni_new_data', ['type' => 'footer']));
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/extension/module/{carousel,banner}.php">	
+		<operation>
+			<search><![CDATA[$this->document->addStyle]]></search>
+			<add position="replace" error="skip"><![CDATA[//$this->document->addStyle]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[$this->document->addScript]]></search>
+			<add position="replace" error="skip"><![CDATA[//$this->document->addScript]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/common/search.php">	
+		<operation>
+			<search><![CDATA[$this->load->language('common/search');]]></search>
+			<add position="after" error="skip"><![CDATA[
+			$this->load->language('extension/module/uni_othertext');
+			
+			$this->load->model('catalog/category');
+			
+			$data['categories'] = [];
+			$categories = $this->model_catalog_category->getCategories(0);
+			foreach ($categories as $category) {
+				$data['categories'][] = array(
+					'category_id' => $category['category_id'],
+					'name'        => $category['name'],
+				);
+			}
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/information/information.php">
+		<operation>
+			<search><![CDATA[public function index() {]]></search>
+			<add position="after" error="skip"><![CDATA[
+			$uniset = $this->config->get('config_unishop2');
+			
+			$route = isset($this->request->get['route']) ? $this->request->get['route'] : '';
+			$menu_schema = isset($uniset['menu_schema']) ? $uniset['menu_schema'] : [];
+			$data['menu_expanded'] = ($uniset['menu_type'] == 1 && in_array($route, $menu_schema)) ? true : false;
+			
+			$this->document->addScript('catalog/view/javascript/jquery/magnific/jquery.magnific-popup.min.js');
+			$this->document->addStyle('catalog/view/javascript/jquery/magnific/magnific-popup.css');
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/extension/module/filter.php">	
+		<operation>
+			<search><![CDATA[public function index() {]]></search>
+			<add position="after" error="skip"><![CDATA[
+			$this->load->language('extension/module/uni_othertext');
+			$uniset = $this->config->get('config_unishop2');
+			$data['ajax_filter'] = isset($uniset['ajax_filter']) ? true : false;
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/product/category.php">
+		<operation>
+			<search><![CDATA[$data['categories'][] = array(]]></search>
+			<add position="after" error="skip"><![CDATA[
+			'thumb' => $this->model_tool_image->resize(($result['image'] == '' ? 'no_image.jpg' : $result['image']), $this->config->get('theme_'.$this->config->get('config_theme').'_image_category_width'), $this->config->get('theme_'.$this->config->get('config_theme').'_image_category_height')),
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/product/manufacturer.php">
+		<operation>
+			<search><![CDATA[public function info]]></search>
+			<add position="after" offset="1" error="skip"><![CDATA[
+			$uniset = $this->config->get('config_unishop2');
+			$lang_id = $this->config->get('config_language_id');
+			
+			$new_data = $this->load->controller('extension/module/uni_new_data', ['type' => 'catalog']);
+			$data = isset($data) ? array_merge($data, $new_data) : $new_data;
+			
+			$currency = $this->session->data['currency'];
+			$this->load->model('extension/module/uni_new_data');
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/{product,extension/module}/{category,product,search,special,manufacturer,latest,featured,bestseller,random,popular}.php">
+		<operation>
+			<search><![CDATA[public function index]]></search>
+			<add position="after" offset="2" error="skip"><![CDATA[
+			$uniset = $this->config->get('config_unishop2');
+			$lang_id = $this->config->get('config_language_id');
+			
+			$data['heading_title'] = isset($uniset['show_heading_in_admin']) && isset($setting['name']) ? $setting['name'] : $this->language->get('heading_title');
+			
+			$module_type_view = isset($uniset['module_type_view']) ? $uniset['module_type_view'] : [];
+			$data['type_view'] = isset($setting['name']) && in_array($setting['name'], $module_type_view) ? 'grid' : 'carousel';
+			
+			$new_data = $this->load->controller('extension/module/uni_new_data', ['type' => 'catalog']);
+			$data = isset($data) ? array_merge($data, $new_data) : $new_data;
+			
+			$currency = $this->session->data['currency'];
+			$this->load->model('extension/module/uni_new_data');
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[$data['products'][] = array(]]></search>
+			<add position="before" error="skip"><![CDATA[
+			$setting = isset($setting) ? $setting : '';
+			$result = isset($product_info) && $setting ? $product_info : $result;
+			$new_data = $this->model_extension_module_uni_new_data->getNewData($result, $setting);
+			$show_description = isset($uniset['show_description']) && !isset($uniset['show_description_alt']) || isset($uniset['show_description_alt']) && !$new_data['attributes'] ? true : false;
+			
+			if($new_data['special_date_end']) {
+				$data['show_timer'] = true;
+			}
+			
+			if($result['quantity'] > 0) {
+				$show_quantity = isset($uniset['show_quantity_cat']) ? true : false;
+				$cart_btn_icon = $uniset[$lang_id]['cart_btn_icon'];
+				$cart_btn_text = $uniset[$lang_id]['cart_btn_text'];
+				$cart_btn_class = '';
+				$quick_order = isset($uniset['show_quick_order']) ? true : false;
+			} else {
+				$show_quantity = isset($uniset['show_quantity_cat_all']) ? true : false;
+				$cart_btn_icon = $uniset[$lang_id]['cart_btn_icon_disabled'];
+				$cart_btn_text = $uniset[$lang_id]['cart_btn_text_disabled'];
+				$cart_btn_class = $uniset['cart_btn_disabled'];
+				$quick_order = isset($uniset['show_quick_order_quantity']) ? true : false;
+			}
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[$data['products'][] = array(]]></search>
+			<add position="after" error="skip"><![CDATA[
+			'additional_image'	=> $new_data['additional_image'],
+			'num_reviews' 		=> isset($uniset['show_rating_count']) ? $result['reviews'] : '',
+			'special_date_end' 	=> $new_data['special_date_end'],
+			'minimum' 			=> $result['minimum'] ? $result['minimum'] : 1,
+			'quantity_indicator'=> $new_data['quantity_indicator'],
+			'stickers' 			=> $new_data['stickers'],
+			'price_value' 		=> $this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax'))*$this->currency->getValue($currency),
+			'special_value' 	=> $this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))*$this->currency->getValue($currency),
+			'discounts'			=> $new_data['discounts'],
+			'attributes' 		=> $new_data['attributes'],
+			'options'			=> $new_data['options'],
+			'show_description'	=> $show_description,
+			'show_quantity'		=> $show_quantity,
+			'cart_btn_icon'		=> $cart_btn_icon,
+			'cart_btn_text'		=> $cart_btn_text,
+			'cart_btn_class'	=> $cart_btn_class,
+			'quick_order'		=> $quick_order,
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/product/product.php">
+		<operation error="skip">
+			<search><![CDATA[$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/]]></search>
+			<add position="replace" error="skip"><![CDATA[//$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[$this->document->addStyle('catalog/view/javascript/jquery/datetimepicker/]]></search>
+			<add position="replace" error="skip"><![CDATA[//$this->document->addStyle('catalog/view/javascript/jquery/datetimepicker/]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[image_popup_height')),]]></search>
+			<add position="after" error="skip"><![CDATA[
+			'small' => $this->model_tool_image->resize($result['image'], $this->config->get('theme_'.$this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_'.$this->config->get('config_theme') . '_image_thumb_height')),
+			]]></add>
+		</operation>	
+		<operation error="skip">
+			<search><![CDATA[$data['images'] = array();]]></search>
+			<add position="before" error="skip"><![CDATA[
+			$data['small'] = $this->model_tool_image->resize($product_info['image'] ? $product_info['image'] : 'no_image.jpg', $this->config->get('theme_'.$this->config->get('config_theme').'_image_additional_width'), $this->config->get('theme_'.$this->config->get('config_theme') . '_image_additional_height'));
+			]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[$this->model_tool_image->resize($option_value['image'], 50, 50),]]></search>
+			<add position="replace" error="skip"><![CDATA[$option_value['image'] ? $this->model_tool_image->resize($option_value['image'], 50, 50) : '',]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA['price'                   => $price,]]></search>
+			<add position="before" error="skip"><![CDATA[
+			'small' => $this->model_tool_image->resize($option_value['image'], $this->config->get('theme_'.$this->config->get('config_theme').'_image_thumb_width'), $this->config->get('theme_'.$this->config->get('config_theme') . '_image_thumb_height')),
+			'full' => $this->model_tool_image->resize($option_value['image'], $this->config->get('theme_'.$this->config->get('config_theme').'_image_popup_width'), $this->config->get('theme_'.$this->config->get('config_theme') . '_image_popup_height')),
+			'price_value' => $this->tax->calculate($option_value['price'], $product_info['tax_class_id'], $this->config->get('config_tax'))*$this->currency->getValue($currency),$option_value['price'],
+			]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[$this->request->get['product_id']) as $option) {]]></search>
+			<add position="before" error="skip"><![CDATA[
+			$o_quantity = 0;
+			$required = false;
+			]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[$this->request->get['product_id']) as $option) {]]></search>
+			<add position="after" error="skip"><![CDATA[			
+			if($option['required'] && ($option['type'] == 'select' || $option['type'] == 'radio' || $option['type'] == 'checkbox')) {
+				$o_quantity = 0;
+				$required = true;
+			}
+			]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[$data['options'][] = array(]]></search>
+			<add position="before" offset="2" error="skip"><![CDATA[
+			$o_quantity = $o_quantity + $option_value['quantity'];
+			]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[$data['options'][] = array(]]></search>
+			<add position="before" offset="1" error="skip"><![CDATA[
+			if($option['required']) {
+				$o_quantity_arr[] = $o_quantity;
+			}
+			]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[if ($product_info['minimum']) {]]></search>
+			<add position="before" error="skip"><![CDATA[
+			$product_info['options'] = $data['options'] ? true : false;
+			$product_info['options_quantity'] = $required ? min($o_quantity_arr) : $product_info['quantity'] + $o_quantity;
+			$product_info['category_name'] = isset($category_info['name']) ? $category_info['name'] : '';
+			$product_info['type'] = 'product';
+			
+			$data = array_merge($data, $this->load->controller('extension/module/uni_new_data', $product_info));
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[public function review() {]]></search>
+			<add position="after" error="skip"><![CDATA[
+			$this->load->language('extension/module/uni_othertext');
+			$this->load->language('extension/module/uni_request');
+			$this->load->language('product/product');
+			$uniset = $this->config->get('config_unishop2');
+			$data['show_plus_minus_review'] = isset($uniset['show_plus_minus_review']) ? $uniset['show_plus_minus_review'] : '';
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA['text'       => nl2br($result['text']),]]></search>
+			<add position="after"><![CDATA[
+			'plus'      	=> nl2br($result['plus']),
+			'minus'       	=> nl2br($result['minus']),
+			'admin_reply'	=> nl2br($result['admin_reply']),]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[if ((utf8_strlen($this->request->post['text']) < 25)]]></search>
+			<add position="before"><![CDATA[
+			$this->load->language('extension/module/uni_othertext');
+			$uniset = $this->config->get('config_unishop2');
+			
+			if(isset($uniset['show_plus_minus_review']) && isset($uniset['plus_minus_review_required'])) {
+				if ((utf8_strlen($this->request->post['plus']) < 3) || (utf8_strlen($this->request->post['plus']) > 1000)) {
+					$json['error'] = $this->language->get('error_plus');
+				}
+				if ((utf8_strlen($this->request->post['minus']) < 3) || (utf8_strlen($this->request->post['minus']) > 1000)) {
+					$json['error'] = $this->language->get('error_minus');
+				}
+			}
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/product/compare.php">
+		<operation error="skip">
+			<search><![CDATA[$data['products'][$product_id] = array(]]></search>
+			<add position="before" error="skip"><![CDATA[
+			$uniset = $this->config->get('config_unishop2');
+			$lang_id = $this->config->get('config_language_id');
+			]]></add>
+		</operation>
+		<operation error="skip">
+			<search><![CDATA[$product_info['manufacturer'],]]></search>
+			<add position="after" error="skip"><![CDATA[
+			'quantity' 			=> $product_info['quantity'],
+			'cart_btn_icon'		=> $product_info['quantity'] > 0 ? $uniset[$lang_id]['cart_btn_icon'] : $uniset[$lang_id]['cart_btn_icon_disabled'],
+			'cart_btn_text'		=> $product_info['quantity'] > 0 ? $uniset[$lang_id]['cart_btn_text'] : $uniset[$lang_id]['cart_btn_text_disabled'],
+			'cart_btn_class'	=> $product_info['quantity'] <= 0 ? $uniset['cart_btn_disabled'] : '',
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/mail/register.php">
+		<operation error="skip">
+			<search><![CDATA[$data['login']]]></search>
+			<add position="before" error="skip"><![CDATA[
+			$this->load->language('extension/module/uni_othertext');
+			$data['text_user_login'] = $this->config->get('new_user_email') ? sprintf($this->language->get('text_new_user_email'), $this->config->get('new_user_email')) : '';
+			$data['text_user_password'] = $this->config->get('new_user_password') ? sprintf($this->language->get('text_new_user_password'), $this->config->get('new_user_password')) : '';
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/model/design/layout.php">
+		<operation>
+			<search><![CDATA[return $query->rows;]]></search>
+			<add position="before" error="skip"><![CDATA[
+			$uniset = $this->config->get('config_unishop2');
+			
+			$home_banners_layouts = isset($uniset['home_banners_layout']) ? explode(',', $uniset['home_banners_layout']) : [1];
+			
+			if(isset($uniset['home_banners_position']) && $uniset['home_banners_position'] == $position && in_array($layout_id, $home_banners_layouts)) {
+				$query->rows[] = array(
+					'layout_module_id'	=> 99999999,
+					'layout_id'			=> $layout_id,
+					'code' 				=> 'uni_home_banner',
+					'position' 			=> $uniset['home_banners_position'],
+					'sort_order'		=> $uniset['home_banners_position_n']
+				);
+				
+				$this->config->set('module_uni_home_banner_status', 1);
+				
+				foreach ($query->rows as $key => $value) {
+					$sort[$key] = $value['sort_order'];
+				}
+			
+				array_multisort($sort, SORT_ASC, $query->rows);
+			}
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/model/catalog/product.php">
+		<operation>
+			<search><![CDATA[if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {]]></search>
+			<add position="before" error="skip"><![CDATA[
+				$uniset = $this->config->get('config_unishop2');
+				$sort_qty = '';
+				
+				if($uniset['sort_qty'] == 1){
+					if(isset($data['sort']) && $data['sort'] == 'p.sort_order') {
+						$sort_qty = '(p.quantity > 0) DESC,';
+					}
+				} elseif($uniset['sort_qty'] == 2) {
+					$sort_qty = '(p.quantity > 0) DESC,';
+				}
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[$sql .= " ORDER BY]]></search>
+			<add position="replace" error="skip"><![CDATA[$sql .= " ORDER BY ".$sort_qty."]]></add>
+		</operation>
+	</file>
+	<file path="catalog/model/catalog/review.php">
+		<operation>
+			<search><![CDATA[, rating =]]></search>
+			<add position="replace"><![CDATA[, plus = '".$this->db->escape(strip_tags($data['plus']))."', minus = '".$this->db->escape(strip_tags($data['minus']))."', admin_reply = '', rating =]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[r.author, r.rating, r.text,]]></search>
+			<add position="replace"><![CDATA[r.author, r.rating, r.text, r.plus, r.minus, r.admin_reply,]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[$this->load->language('mail/review');]]></search>
+			<add position="after"><![CDATA[$this->load->language('extension/module/uni_othertext');]]></add>
+		</operation>
+		<operation>
+            <search><![CDATA[$message .= html_entity_decode($data['text'], ENT_QUOTES, 'UTF-8') . "\n\n";]]></search>
+            <add position="after"><![CDATA[
+			$message .= $data['plus'] ? $this->language->get('text_plus')."\n".html_entity_decode($data['plus'], ENT_QUOTES, 'UTF-8')."\n\n" : '';
+			$message .= $data['minus'] ? $this->language->get('text_minus')."\n".html_entity_decode($data['minus'], ENT_QUOTES, 'UTF-8')."\n\n" : '';
+			$message .= $this->config->get('config_secure') ? HTTPS_SERVER.'admin/index.php?route=catalog/review/edit&review_id='.$review_id : HTTP_SERVER.'admin/index.php?route=catalog/review/edit&review_id='.$review_id;
+			]]></add>
+        </operation>
+	</file>
+	<file path="catalog/controller/startup/startup.php">
+		<operation error="skip">
+			<search><![CDATA[$this->registry->set('encryption']]></search>
+			<add position="after" offset="0" error="skip"><![CDATA[
+			$this->load->model('extension/module/uni_settings');
+			$this->model_extension_module_uni_settings->getSetting();
+			]]></add>
+		</operation>
+	</file>
+	<file path="catalog/controller/event/theme.php">
+		<operation error="skip">
+			<search><![CDATA[$twig = new]]></search>
+			<add position="before" error="skip"><![CDATA[
+			$config['auto_reload'] = true;
+			]]></add>
+		</operation>
+	</file>
+	<file path="system/library/template/twig.php">
+		<operation error="skip">
+			<search><![CDATA[$this->twig = new]]></search>
+			<add position="before" error="skip"><![CDATA[
+			$config['auto_reload'] = true;
+			]]></add>
+		</operation>
+	</file>
+</modification>

@@ -1,0 +1,169 @@
+{% if error_warning %}
+	<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{error_warning}}<button type="button" class="close" data-dismiss="alert">&times;</button></div>
+{% endif %}
+{% if products or vouchers %}
+	<div class="table_wrap">
+		<table class="table table-bordered table-hover table-responsive">
+			<tr>
+				<td class="image text-center">{{text_image}}</td>
+				<td class="text-left">{{column_name}}</td>
+				<td class="text-left hidden-xs">{{column_model}}</td>
+				<td class="quantity text-left">{{column_quantity}}</td>
+				<td class="text-right hidden-xs">{{column_price}}</td>
+				<td class="total text-right">{{column_total}}</td>
+				<td class="delete text-center"></td>
+			</tr>
+			{% for product in products %}
+				<tr>
+					<td class="image text-center"><img src="{{product.thumb}}" class="img-thumbnail" title="{{product.name}}" /></td>
+					<td class="name text-left">
+						<a href="{{product.href}}">{{product.name}}</a>
+						{% if not product.stock %}<span class="text-danger">***</span>{% endif %}
+						{% for option in product.option %}
+							<br /><small>{{option.name}}: {{option.option_value}} {{option.value}}</small>
+						{% endfor %}
+						{% if product.reward %}
+							<br /><small>{{ product.reward }}</small>
+						{% endif %}
+						{% if product.recurring %}
+							<br /><span class="label label-info">{{text_recurring_item}}</span> <small>{{product.recurring}}</small>
+						{% endif %}
+					</td>
+					<td class="text-left hidden-xs">{{product.model}}</td>
+					<td class="quantity text-left">
+						<input type="text" name="quantity[{{product.cart_id}}]" value="{{product.quantity}}" onchange="uniCartEdit('{{product.cart_id}}', $(this).val());" size="1" class="form-control" />
+						<span>
+							<i class="fa fa-plus btn btn-default" onclick="uniCartEdit('{{product.cart_id}}', parseFloat($(this).parent().prev().val())+1, {{product.product_id}});"></i>
+							<i class="fa fa-minus btn btn-default" onclick="uniCartEdit('{{product.cart_id}}', parseFloat($(this).parent().prev().val())-1, {{product.product_id}});"></i>
+						</span>
+					</td>
+					<td class="text-right hidden-xs">{{ product.price }}</td>
+					<td class="total text-right">{{product.total}}</td>
+					<td class="delete text-center"><button type="button" onclick="uniCartEdit('{{product.cart_id}}', 0);" title="{{button_remove}}"><i class="fa fa-times"></i></button></td>
+				</tr>
+			{% endfor %}
+			{% for voucher in vouchers %}
+				<tr>
+					<td class="image text-center"></td>
+					<td class="text-left">{{voucher.description}}</td>
+					<td class="text-left hidden-xs"></td>
+					<td class="text-center">1</td>
+					<td class="text-right hidden-xs">{{voucher.amount}}</td>
+					<td class="text-right">{{voucher.amount}}</td>
+					<td class="delete text-center"><button type="button" onclick="uniVoucherRemove('{{voucher.key}}');" title="{{button_remove}}" class=""><i class="fa fa-times"></i></button></td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+	{% if coupon_status or voucher_status or reward_status %}
+		<div class="row">
+			<div class="col-xs-12 text-right">
+				<p class="text-additional">{{text_additional}}</p>
+				{% if reward_user %}
+					<p class="text-reward">{{ entry_reward }}</p>
+				{% endif %}
+			</div>
+			{% if coupon_status %}
+				<div class="col-xs-12 text-right">
+					<div class="coupon input-group">
+						<input type="text" name="coupon" value="{{coupon}}" placeholder="{{text_coupon}}" id="input-coupon" class="form-control" />
+						<span class="input-group-btn"><button id="button-coupon" data-loading-text="{{text_loading}}" class="btn btn-default">{{button_apply}}</button></span>
+					</div>
+				</div>
+			{% endif %}
+			{% if reward_status %}
+				<div class="col-xs-12 text-right">
+					<div class="reward input-group">
+						<input type="text" name="reward" value="{{reward}}" placeholder="{{text_reward}}" id="input-reward" class="form-control" />
+						<span class="input-group-btn"><button id="button-reward" data-loading-text="{{text_loading}}" class="btn btn-default">{{button_apply}}</button></span>
+					</div>
+				</div>
+			{% endif %}
+			{% if voucher_status %}
+				<div class="col-xs-12 text-right">
+					<div class="voucher input-group">
+						<input type="text" name="voucher" value="{{voucher}}" placeholder="{{text_voucher}}" id="input-voucher" class="form-control" />
+						<span class="input-group-btn"><button id="button-voucher" data-loading-text="{{text_loading}}" class="btn btn-default">{{button_apply}}</button></span>
+					</div>
+				</div>
+			{% endif %}
+		</div>
+	{% endif %}
+	<table class="total_table">
+		{% if weight %}
+			<tr>
+				<td colspan="6" class="text-right hidden-xs">{{text_product_weight}} </td>
+				<td colspan="3" class="text-right visible-xs">{{text_product_weight}} </td>
+				<td> {{weight}}</td>
+			</tr>
+		{% endif %}
+		{% for total in totals %}
+			<tr>
+				<td colspan="6" class="text-right hidden-xs">{{total.title}}:</td>
+				<td colspan="3" class="text-right visible-xs">{{total.title}}:</td>
+				<td class="text-right">{{total.text}}</td>
+			</tr>
+		{% endfor %}
+	</table>
+	{% if related and products_related %}
+		<div class="heading"><span>{{checkout_related_text}}</span></div>
+		<div class="uni-module product_related">
+			<div class="uni-module-wrapper">
+				{% for product in products_related %}
+					<div class="product-thumb transition">
+						<div class="image">
+							{# include 'unishop2/template/extension/module/uni_stickers.twig' #}
+							<a href="{{product.href}}">
+								<img src="{{product.thumb}}" {% if product.additional_image %}data-additional="{{product.additional_image}}"{% endif %} alt="{{product.name}}" title="{{product.name}}" class="img-responsive" />
+							</a>
+						</div>
+						<div>
+						<div class="caption">
+							<a href="{{product.href}}">{{product.name}}</a>
+							{% if show_description or show_description_alt and product.attribute_groups is empty %}
+								<p class="description">{{product.description}}</p>
+							{% endif %}
+							{% include 'unishop2/template/extension/module/uni_options.twig' %}
+							{% if product.rating >= 0 and show_rating %}
+								<div class="rating">
+									{% for i in 1..5 %}
+										<i class="{{product.rating < i ? 'far' : 'fa'}} fa-star"></i>
+									{% endfor %} 
+									{% if show_rating_count %}<sup><a onclick="location='{{product.href}}#tab-review'">{{product.num_reviews}}</a></sup>{% endif %}
+								</div>
+							{% endif %}
+							{% if product.price %}
+								<p class="price" data-price="{{product.price_value}}" data-special="{{product.special_value}}" data-discount="{{product.discounts}}">
+									{% if product.special %}
+										<span class="price-old">{{ product.price }}</span> <span class="price-new">{{ product.special }}</span> 
+									{% else %}
+										{{ product.price }}
+									{% endif %}
+									{% if product.tax %}
+										<span class="price-tax">{{text_tax}} {{product.tax}}</span>
+									{% endif %}
+								</p>
+							{% endif %}
+						</div>
+						<div class="cart">
+							<button type="button" class="add_to_cart btn {{product.cart_btn_class}} {{product.product_id}}" data-toggle="tooltip" title="{{product.cart_btn_text}}" onclick="cart.add({{product.product_id}}, this)"><i class="{{product.cart_btn_icon}}"></i><span>{{product.cart_btn_text}}</span></button>
+						</div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+		<script type="text/javascript">
+			$('.product_related').uniModules({
+				type:'{{type_view is defined ? type_view : 'carousel'}}',
+				items:{0:{items:1},580:{items:2},720:{items:2},992:{items:3},1050:{items:3}},
+				autoheight:['caption > a', 'description', 'option'],
+				loop: {{products_related|length > 4 ? 'true' : 'false'}}
+			});
+		</script>
+	{% endif %}
+{% else %}
+	<script>
+		$('#content').load('index.php?route=checkout/cart #content > *');
+	</script>
+{% endif %}

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+<name>UniShop2 admin side</name>
+<code>UniShop2 admin side</code>
+<version>1.3.7.3</version>
+<author>spectrum</author>
+	<file path="admin/controller/common/column_left.php">
+		<operation>
+			<search><![CDATA[$catalog = array();]]></search>
+			<add position="before" error="skip"><![CDATA[
+			$this->load->language('extension/module/uni_settings');
+			
+			$unishop = array();
+			
+			if ($this->user->hasPermission('access', 'extension/module/uni_settings')) {		
+				$unishop[] = array(
+					'name'	   => $this->language->get('text_unishop_settings'),
+					'href'     => $this->url->link('extension/module/uni_settings', 'user_token=' . $this->session->data['user_token'], true),
+					'children' => array()		
+				);					
+			}
+			
+			if ($this->user->hasPermission('access', 'extension/module/uni_news')) {
+				$unishop_news = array();
+								
+				$unishop_news[] = array(
+					'name'	   => $this->language->get('text_news_new'),
+					'href'     => $this->url->link('extension/module/uni_news/insert', 'user_token='.$this->session->data['user_token'], true),
+					'children' => array()		
+				);
+			
+				$unishop_news[] = array(
+					'name'	   => $this->language->get('text_news_all'),
+					'href'     => $this->url->link('extension/module/uni_news/listing', 'user_token='.$this->session->data['user_token'], true),
+					'children' => array()		
+				);
+				
+				$unishop_news[] = array(
+					'name'	   => $this->language->get('text_news_cat'),
+					'href'     => $this->url->link('extension/module/uni_news/category_list', 'user_token='.$this->session->data['user_token'], true),
+					'children' => array()		
+				);
+				
+				$unishop_news[] = array(
+					'name'	   => $this->language->get('text_news_setting'),
+					'href'     => $this->url->link('extension/module/uni_news/setting', 'user_token='.$this->session->data['user_token'], true),
+					'children' => array()		
+				);
+			
+				if ($unishop_news) {
+					$unishop[] = array(
+						'name'	   => $this->language->get('text_news'),
+						'href'     => '',
+						'children' => $unishop_news		
+					);	
+				}
+			}
+			
+			if ($this->config->get('uni_request') && $this->user->hasPermission('access', 'extension/module/uni_request')) {
+				$this->load->language('extension/module/uni_request');
+				
+				$this->load->model('extension/module/uni_request');
+				$this->load->controller('extension/module/uni_request/install');
+				$this->load->controller('extension/module/uni_request/check');
+			
+				$unishop_request = array();
+			
+				$unishop_request[] = array(
+					'name'	   => $this->language->get('text_status_1').' ('.$this->model_extension_module_uni_request->getNewRequests().')',
+					'href'     => $this->url->link('extension/module/uni_request&filter_status=1', 'user_token=' . $this->session->data['user_token'], true),
+					'children' => array()		
+				);
+			
+				$unishop_request[] = array(
+					'name'	   => $this->language->get('text_status_2').' ('.$this->model_extension_module_uni_request->getProcessingRequests().')',
+					'href'     => $this->url->link('extension/module/uni_request&filter_status=2', 'user_token=' . $this->session->data['user_token'], true),
+					'children' => array()		
+				);
+			
+				$unishop_request[] = array(
+					'name'	   => $this->language->get('text_total_requests').' ('.$this->model_extension_module_uni_request->getTotalRequests().')',
+					'href'     => $this->url->link('extension/module/uni_request', 'user_token=' . $this->session->data['user_token'], true),
+					'children' => array()		
+				);
+				
+				$unishop_request[] = array(
+					'name'	   => $this->language->get('text_requests_setting'),
+					'href'     => $this->url->link('extension/module/uni_request/setting', 'user_token=' . $this->session->data['user_token'], true),
+					'children' => array()		
+				);
+			
+				if ($unishop_request) {
+					$unishop[] = array(
+						'name'	   => $this->language->get('text_requests'),
+						'href'     => '',
+						'children' => $unishop_request
+					);
+				}
+			}
+			
+			if ($unishop) {
+				$data['menus'][] = array(
+					'id'       => 'menu-unishop',
+					'icon'	   => 'fa-cogs', 
+					'name'	   => $this->language->get('text_unishop'),
+					'href'     => '',
+					'children' => $unishop
+				);		
+			}
+			]]></add>
+		</operation>
+	</file>
+	
+	<file path="admin/model/catalog/review.php">
+		<operation>
+			<search><![CDATA[public function addReview($data) {]]></search>
+			<add position="before"><![CDATA[
+			public function checkAdminReply() {
+				$plus = $this->db->query("show columns FROM ".DB_PREFIX."review WHERE Field = 'plus'");
+				if (!$plus->num_rows) { 
+					$this->db->query("ALTER TABLE `".DB_PREFIX."review` ADD `plus` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' AFTER `text`");
+				} 
+				
+				$minus = $this->db->query("show columns FROM ".DB_PREFIX."review WHERE Field = 'minus'");
+				if (!$minus->num_rows) { 
+					$this->db->query("ALTER TABLE `".DB_PREFIX."review` ADD `minus` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' AFTER `text`");
+				} 
+				
+				$admin_reply = $this->db->query("show columns FROM ".DB_PREFIX."review WHERE Field = 'admin_reply'");
+				if (!$admin_reply->num_rows) { 
+					$this->db->query("ALTER TABLE `".DB_PREFIX."review` ADD `admin_reply` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' AFTER `text`");
+				}
+			}
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[, rating =]]></search>
+			<add position="replace"><![CDATA[, plus = '".$this->db->escape(strip_tags($data['plus']))."', minus = '".$this->db->escape(strip_tags($data['minus']))."', admin_reply = '".$this->db->escape(strip_tags($data['admin_reply']))."', rating =]]></add>
+		</operation>
+	</file>
+	<file path="admin/controller/catalog/review.php">
+		<operation>
+			<search><![CDATA[$this->getList();]]></search>
+			<add position="before"><![CDATA[
+			$this->model_catalog_review->checkAdminReply();
+			]]></add>
+		</operation>
+		<operation>
+			<search><![CDATA[if (isset($this->request->post['rating'])) {]]>
+			</search>
+			<add position="before"><![CDATA[
+			if (isset($this->request->post['plus'])) {
+				$data['plus'] = $this->request->post['plus'];
+			} elseif (!empty($review_info)) {
+				$data['plus'] = $review_info['plus'];
+			} else {
+				$data['plus'] = '';
+			}
+			if (isset($this->request->post['minus'])) {
+				$data['minus'] = $this->request->post['minus'];
+			} elseif (!empty($review_info)) {
+				$data['minus'] = $review_info['minus'];
+			} else {
+				$data['minus'] = '';
+			}
+			if (isset($this->request->post['admin_reply'])) {
+				$data['admin_reply'] = $this->request->post['admin_reply'];
+			} elseif (!empty($review_info)) {
+				$data['admin_reply'] = $review_info['admin_reply'];
+			} else {
+				$data['admin_reply'] = '';
+			}
+			]]></add>
+		</operation>
+	</file>
+	<file path="admin/language/*/catalog/review.php">
+		<operation>
+			<search><![CDATA[// Heading]]>
+			</search>
+			<add position="after"><![CDATA[
+			$_['entry_plus']   		= 'Достоинства:';
+			$_['entry_minus']  		= 'Недостатки:';
+			$_['entry_admin_reply'] = 'Ответ:';
+			]]></add>
+		</operation>
+	</file>
+	<file path="admin/view/template/catalog/review_form.twig">
+		<operation>
+			<search><![CDATA[<label class="col-sm-2 control-label" for="input-text">]]></search>
+			<add position="before" offset="1"><![CDATA[
+			<div class="form-group required">
+				<label class="col-sm-2 control-label" for="input-plus">{{entry_plus}}</label>
+				<div class="col-sm-10">
+					<textarea name="plus" cols="60" rows="8" placeholder="{{entry_plus}}" id="input-text" class="form-control">{{plus}}</textarea>
+				</div>
+			</div>
+			<div class="form-group required">
+				<label class="col-sm-2 control-label" for="input-minus">{{entry_minus}}</label>
+				<div class="col-sm-10">
+					<textarea name="minus" cols="60" rows="8" placeholder="{{entry_minus}}" id="input-text" class="form-control">{{minus}}</textarea>
+				</div>
+			</div>
+			<div class="form-group required">
+				<label class="col-sm-2 control-label" for="input-admin_reply">{{entry_admin_reply}}</label>
+				<div class="col-sm-10">
+					<textarea name="admin_reply" cols="60" rows="8" placeholder="{{entry_admin_reply}}" id="input-text" class="form-control">{{admin_reply}}</textarea>
+				</div>
+			</div>
+			]]></add>
+		</operation>
+	</file>
+</modification>

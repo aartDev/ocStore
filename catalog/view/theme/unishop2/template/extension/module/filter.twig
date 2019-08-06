@@ -1,0 +1,91 @@
+<div class="filter-default">
+	<div class="heading"><span>{{heading_title}}</span></div>
+	{% for filter_group in filter_groups %}
+		<div class="group">
+			<div class="group-name">{{filter_group.name}}</div>
+			<div id="filter-group{{filter_group.filter_group_id}}">
+				{% for filter in filter_group.filter %}
+					<label class="input">
+						<input type="checkbox" name="filter[]" value="{{filter.filter_id}}" {{filter.filter_id in filter_category ? 'checked="checked"'}} /><span></span>{{filter.name}}
+					</label>
+				{% endfor %}
+			</div>
+		</div>
+	{% endfor %}
+	<div class="text-right">
+		<button type="button" id="button-filter" class="btn btn-primary"><i class="fa fa-filter" aria-hidden="true"></i><span>{{button_filter}}</span></button>
+	</div>
+</div>
+<script>
+$('#button-filter').on('click', function() {
+	filter = [];
+
+	$('input[name^=\'filter\']:checked').each(function(element) {
+		filter.push(this.value);
+	});
+	
+	{% if ajax_filter %}
+	$.ajax({
+		url: '{{action}}&filter='+filter.join(','),
+		type: 'get',
+		dataType: 'html',
+		beforeSend: function() {
+			$('html body').append('<div class="full-width-loading"></div>');
+		},
+		complete: function() {
+			uniSelectView.init();
+			scroll_to('.products-block');
+			
+			$.each($('.product-thumb a'), function() {
+				$(this).attr('target', '_blank');
+			});
+		},
+		success: function(data) {
+			var products = $(data).find('.products-block').html(),
+				pagination = $(data).find('.pagination_wrap').html(),
+				pagination2 = $(pagination).find('.pagination').length,
+				showmore = $('.show-more');
+			
+			if(typeof(products) == 'undefined') {
+				products = '{{text_no_product}}';
+				pagination = '';
+				showmore.hide();
+			} else if (!pagination2){
+				showmore.hide();
+			} else {
+				showmore.show();
+			}
+		
+			$('.products-block').html(products);
+			$('.pagination_wrap').html(pagination);
+			$('.full-width-loading').remove();
+		}
+	});
+	{% else %}
+		location = '{{action}}&filter=' + filter.join(',');
+	{% endif %}
+});
+
+	function def_filter() {
+		if($(window).width() < 767) {
+				$('.filter-default').css('height', $(window).height());
+				$('#column-left').after('<div class="filter-default-open"><i class="btn btn-default fas fa-filter"></i></div');
+			
+				$('.filter-default-open').on('click', function() {
+					$('#column-left, .filter-default-open').toggleClass('show');
+				});
+			
+				$('.filter-default #button-filter').on('click', function() {
+					$('#column-left, .filter-default-open').removeClass('show');
+				});
+		} else {
+			$('.filter-default-open').remove();
+		}
+	};
+	
+	def_filter();
+	
+	$(window).resize(function(){
+		def_filter();
+	});
+</script> 

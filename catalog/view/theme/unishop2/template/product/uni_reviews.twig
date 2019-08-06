@@ -1,0 +1,68 @@
+{{header}}
+<div class="container">
+	<ul class="breadcrumb {{ menu_expanded ? 'col-md-offset-3 col-lg-offset-3 col-xxl-offset-4' }}">
+		{% for key, breadcrumb in breadcrumbs %}
+			{% if key + 1 < breadcrumbs|length %}
+				<li><a href="{{breadcrumb.href}}">{{breadcrumb.text}}</a></li>
+			{% else %}
+				<li>{{breadcrumb.text}}</li>
+			{% endif %}
+		{% endfor %}
+	</ul>
+	<div class="row">
+		{{column_left}}
+		{% if column_left and column_right %}
+			{% set class = 'col-sm-4 col-md-6 col-lg-6 col-xxl-12' %}
+		{% elseif column_left or column_right %}
+			{% set class = 'col-sm-8 col-md-9 col-lg-9 col-xxl-16' %}
+		{% else %}
+			{% set class = 'col-sm-12' %}
+		{% endif %}
+		<div id="content" class="{{class}}">
+			{{content_top}}
+			<div class="heading-h1"><h1>{{ heading_title }}</h1></div>
+			{% if reviews %}
+				<div class="products-block">
+				<div class="row">
+					{% for review in reviews %}
+						<div class="product-layout2 product-grid col-xs-12 col-sm-3 col-xxl-4">
+							<div class="product-thumb transition">
+								<div class="image">
+									<a href="{{review.prod_href}}"><img src="{{review.prod_thumb}}" alt="{{review.prod_name}}" title="{{review.prod_name}}" class="img-responsive" /></a>
+								</div>
+								<div class="caption">
+									<a href="{{review.prod_href}}">{{review.prod_name}}</a>
+									{% if review.rating %}
+										<div class="rating">
+											{% for i in 1..5 %}
+												<i class="{{review.rating < i ? 'far fa-star' : 'fa fa-star'}}"></i>
+											{% endfor %}
+										</div>
+									{% endif %}
+									<p class="description">{{review.description}}</p>
+									<div class="reviews-sign">
+										<div class="reviews-author">{{review.author}}</div>
+										<div class="reviews-date">{{review.date_added}}</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+					<script>
+						uniSelectView.init();
+					</script>
+				</div>
+				</div>
+				<div class="pagination_wrap row">
+					<div class="col-xs-12">{{pagination}}</div>
+			        <div class="col-xs-12">{{results}}</div>
+				</div>
+			{% else %}
+				<p>{{text_empty}}</p>
+			{% endif %}
+			{{content_bottom}}
+		</div>
+		{{column_right}}
+	</div>
+</div>
+{{footer}}

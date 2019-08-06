@@ -1,0 +1,30 @@
+{% if categories %}
+	{% if heading_title %}
+		<div class="heading"><span>{{ heading_title }}</span></div>
+	{% endif %}
+	<div class="uni-category-wall row">
+		{% for category in categories %}
+			<div class="item {{  category.childs ? 'childs'  }} {{ columns }}">
+				{% if category.image %}
+					<a href="{{ category.href }}" class="image image-after">
+						<img src="{{ category.image }}" alt="{{ category.name }}" class="img-responsive" />
+						<span class="btn btn-primary">{{ category.name }}</span>
+					</a>
+				{% endif %} 
+				{% if category.childs %}
+					<div>
+						<ul class="child">
+							{% for child in category.childs %}
+								<li><a href="{{ child.href }}">{{ child.name }}</a></li>
+							{% endfor %}
+						</ul>
+						<a onclick="location='{{ category.href }}'"><span>{{ text_all_cats }}</span></a>
+					</div>
+				{% endif %} 
+			</div>
+		{% endfor %}
+	</div>
+	<script>
+		autoheight('.uni-category-wall .item .child');
+	</script>
+{% endif %} 

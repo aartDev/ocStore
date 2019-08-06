@@ -1,0 +1,97 @@
+{{header}}
+<div class="container">
+	<ul class="breadcrumb {{ menu_expanded ? 'col-md-offset-3 col-lg-offset-3 col-xxl-offset-4' }}">
+		{% for key, breadcrumb in breadcrumbs %}
+			{% if key + 1 < breadcrumbs|length %}
+				<li><a href="{{breadcrumb.href}}">{{breadcrumb.text}}</a></li>
+			{% else %}
+				<li>{{breadcrumb.text}}</li>
+			{% endif %}
+		{% endfor %}
+	</ul>
+	<div class="row">
+		{{column_left}}
+		{% if column_left and column_right %}
+			{% set class = 'col-sm-4 col-md-6 col-lg-6 col-xxl-12' %}
+		{% elseif column_left or column_right %}
+			{% set class = 'col-sm-8 col-md-9 col-lg-9 col-xxl-16' %}
+		{% else %}
+			{% set class = 'col-sm-12' %}
+		{% endif %}
+		<div id="content" class="{{class}}">
+			{{content_top}}
+			<div class="heading-h1"><h1>{{ heading_title }}</h1></div>
+			{% if description %}
+				<div class="category-info">
+					{% if thumb %}<div class="image image-after"><img src="{{thumb}}" alt="{{heading_title}}" title="{{heading_title}}" class="img-thumbnail" /></div>{% endif %}
+					{% if description %}<div class="description">{{description}}</div>{% endif %}
+				</div>
+			{% endif %}
+			{% if categories %}
+				<div class="category-list row">
+					{% for category in categories %}
+						<div class="category {{subcategory_column ? subcategory_column : 'col-sm-2'}}">
+							<a href="{{category.href}}" class="image-after">
+								{% if category.thumb %}<img src="{{category.thumb}}" alt="" title="" class="img-responsive" />{% endif %}
+								<p>{{category.name}}</p>
+							</a>
+						</div>
+					{% endfor %}
+				</div>
+				<hr style="margin:0 0 20px" />
+			{% endif %}
+			{% if news_data %}
+				<div class="news-list">
+					{% for news in news_data %}
+						<div class="item row">
+							<div class="image col-xs-12 col-sm-4 col-md-3 col-lg-3 col-xxl-4">
+								<a onclick="location='{{news.href}}'" class="image-after">
+									<img src="{{news.image}}" alt="{{news.name}}" class="img-responsive" />
+								</a>
+							</div>
+							<div style="margin:0 0 10px" class="col-xs-12 visible-xs"></div>
+							<div class="col-xs-12 col-sm-8 col-md-9 col-lg-9 col-xxl-16">
+								<h4 onclick="location='{{news.href}}'" style="cursor:pointer">{{news.name}}</h4>
+								<p class="description">{{news.description}}</p>
+								<div class="posted">
+									<i class="fa fa-calendar" aria-hidden="true"></i>{{news.posted}}
+									<i class="fa fa-eye" aria-hidden="true"></i>{{news.viewed}}
+									<a href="{{news.href}}" title="{{news.name}}">{{text_more}}</a>
+								</div>
+							</div>
+						</div>
+						<hr />
+					{% endfor %}
+				</div>
+				<div class="pagination_wrap row">
+					<div class="col-xs-12">{{pagination}}</div>
+			        <div class="col-xs-12">{{results}}</div>
+				</div>
+			{% endif %}
+			{% if not categories and not news_data %}
+				<p>{{text_error}}</p>
+			{% endif %}
+			{{content_bottom}}
+		</div>
+		{{column_right}}
+	</div>
+</div>
+{{categories ? '<script>autoheight(".category-list p");</script>'}}
+
+<script type="application/ld+json">
+	{
+		"@context": "http://schema.org",
+		"@type": "BreadcrumbList",
+		"itemListElement": [
+		{% for i, breadcrumb in breadcrumbs %}
+			{
+			"@type": "ListItem",
+			"position": {{i+1}},
+			"name": "{{i == 0 ? shop_name: breadcrumb.text}}",
+			"item": "{{breadcrumb.href}}"
+			{{i + 1 < breadcrumbs|length ? '},' : '}' }}
+		{% endfor %}
+		]
+	}
+</script>
+{{footer}}

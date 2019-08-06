@@ -1,0 +1,104 @@
+#menu_wrap {display:none !important}
+#cart.fly{position:relative;top:auto;right:auto;margin-top:0}
+#cart .dropdown-menu {display:none !important}
+
+#unicheckout #unicart table {margin:0 0 10px}
+#unicheckout #unicart .table_wrap {overflow:hidden;border:solid 1px #ddd;margin:0 0 10px; border-radius:4px}
+#unicheckout #unicart .table_wrap table {margin:0;border:0}
+#unicheckout #unicart .table_wrap table tr:first-child {font-size:.8em;font-weight:500}
+#unicheckout #unicart .table_wrap table tr:nth-child(odd) td {background:#f5f5f5}
+#unicheckout #unicart .table_wrap table td{border:0}
+#unicheckout #unicart .table_wrap table tr + tr td {border-top:solid 1px #ddd}
+#unicheckout #unicart .table_wrap table td + td{border-left:solid 1px #ddd}
+#unicheckout #unicart .table_wrap table tr:hover {background:transparent}
+#unicheckout #unicart .quantity {/* min-width:80px; */}
+
+@-keyframes spin{100%{transform:rotate(360deg)}}
+@-webkit-keyframes spin{100%{transform:rotate(360deg)}}
+@-moz-keyframes spin{100%{transform:rotate(360deg)}}
+
+#unicheckout #unicart .coupon_table {width:100%;margin:0 0 7px;text-align:right;border-bottom:solid 1px #ddd}
+#unicheckout #unicart .coupon_table p {margin:-2px 0 10px;font-size:0.9em}
+#unicheckout #unicart .coupon_table div {width:100px;/* float:right; */padding:0 0 8px}
+#unicheckout #unicart .coupon_table tr:last-child td {padding:0 0 5px}
+
+#unicheckout #unicart .total_table {width:100%;margin:0 0 20px;text-align:right;border-bottom:solid 1px #ddd}
+#unicheckout #unicart .total_table tr td {font-weight:500}
+#unicheckout #unicart .total_table tr td:last-child {width:50px;padding:0 0 0 15px;1text-align:left;white-space:nowrap;font-weight:700;color:#D9534F}
+#unicheckout #unicart .total_table tr:last-child td {font-size:1.0em;font-weight:700;padding:0 0 10px}
+
+#unicheckout #unicart .image {width:120px;word-break:break-all}
+#unicheckout #unicart .quantity {width:1%;text-align:center}
+#unicheckout #unicart .quantity div {width:76px}
+#unicheckout #unicart .total {white-space:nowrap}
+#unicheckout #unicart .delete {width:50px;white-space:nowrap}
+#unicheckout #unicart .delete button {background:none;border:none}
+#unicheckout #unicart .delete button:hover {color:#D9534F}
+#unicheckout #unicart .product-thumb > div {display:table-cell;vertical-align:top;box-shadow:none;border:none}
+#unicheckout #unicart .product-thumb > div:nth-child(2) {padding:0 0 0 15px}
+#unicheckout #unicart .product-thumb .product_sticker {left:-1px}
+#unicheckout #unicart .product-thumb .option label span {display:inline-block}
+#unicheckout #unicart .product-thumb .option span.img + span {display:none}
+#unicheckout #unicart .product-thumb .description {display:none}
+#unicheckout #unicart .product-thumb .cart {padding:0}
+
+#unicheckout #unicart .row {margin-bottom:10px}
+#unicheckout #unicart .text-additional {margin:0 0 10px;font-size:.85em;color:#888}
+#unicheckout #unicart .col-xs-12 .coupon, #unicheckout #unicart .col-xs-12 .reward, #unicheckout #unicart .col-xs-12 .voucher {max-width:270px;margin:0 0 5px auto}
+#unicheckout #unicart .coupon input, #unicheckout #unicart .reward input, #unicheckout #unicart .voucher input {height:24px}
+#unicheckout #unicart .coupon .btn, #unicheckout #unicart .reward .btn, #unicheckout #unicart .voucher .btn {height:24px;vertical-align:top;font-size:.95em}
+
+#unicheckout #unicart .coupon + .text-danger, #unicheckout #unicart .reward .text-danger, #unicheckout #unicart .voucher .text-danger {margin:-5px 0 5px}
+
+#unicheckout .well {padding:10px 15px;font-size:.95em;font-weight:500}
+#unicheckout .well a {border-bottom:dotted 1px}
+
+#unicheckout .hide {display:none}
+
+#unicheckout .col-md-12 {clear:both}
+#unicheckout .form-group {margin-bottom:10px}
+#unicheckout .firstname.col-xs-6, #unicheckout #user .email.col-xs-6 {padding-right:5px}
+#unicheckout .lastname.col-xs-6, #unicheckout #user .telephone.col-xs-6 {padding-left:5px}
+
+#unicheckout .country.col-xs-6, #unicheckout .city.col-xs-6 {padding-right:5px}
+#unicheckout .zone.col-xs-6, #unicheckout .postcode.col-xs-6 {padding-left:5px}
+
+#unicheckout #user .form-group.col-xs-6.hide + .col-xs-6 {padding:0 10px 0 5px}
+#unicheckout .payment-address .radio{margin:10px 0 13px}
+#unicheckout .payment-address .radio:nth-child(2){margin:0 0 10px}
+
+#unicheckout #payment-address-new {}
+#unicheckout #payment-address-new .cover{position:absolute;top:20px;left:0;width:100%;height:100%;background:rgba(255, 255, 255, .5)}
+
+#unicheckout textarea {min-height:50px}
+#unicheckout .payment-address {margin:10px 0 0}
+#unicheckout .shipping-method .radio, #unicheckout .payment-method .radio{display:block;margin:0 0 4px}
+#unicheckout .shipping-method, #unicheckout .payment-method {margin:0 0 20px}
+#unicheckout table td {vertical-align:middle}
+
+#unicheckout .shipping-method label {width:100%}
+#unicheckout .shipping-method .methods {margin:0 0 0 -3px}
+#unicheckout .shipping-method span.method + span.method {float:right}
+
+#unicheckout .custom-field label{display:block;margin:0}
+#unicheckout .custom-field label + .text-danger{margin:-5px 0 10px}
+
+#unicheckout .cart-empty {padding:40px 0 0;text-align:center;font-size:1.8em;color:#888}
+
+#unicheckout .loading {position:fixed;z-index:999;top:0;left:0;width:100%;height:100%;text-align:center;background:rgba(255, 255, 255, .7)}
+#unicheckout .loading:after {position:absolute;top:50%;left:50%;display:block;width:36px;height:36px;margin:-18px auto auto -18px;content:'';border:solid 3px;border-color:#f6846a transparent;border-radius:100%;animation:spin 1s infinite linear}
+
+@media (max-width:768px){
+    
+}
+
+@media (max-width:500px){
+    #unicheckout #unicart .table_wrap table td {padding:5px}
+    #unicheckout #unicart .image {width:60px}
+    #unicheckout #unicart .name {font-size:.85em}
+    #unicheckout #unicart .quantity {width:38px;text-align:center;word-break:break-all}
+    #unicheckout #unicart .quantity .form-control{width:40px;float:none;display:inline;border:solid 1px #ccc;border-radius:4px}
+    #unicheckout #unicart .quantity span {display:none !important}
+    #unicheckout #unicart .total {font-size:.9em}
+    #unicheckout #unicart .delete{width:20px}
+}

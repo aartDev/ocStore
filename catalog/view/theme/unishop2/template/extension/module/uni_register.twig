@@ -1,0 +1,57 @@
+{% if show_register %}
+	<div id="modal-register-form" class="modal">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">{{text_register}}</h4>
+				</div>
+				<div id="popup_register" class="modal-body">
+					<form class="popup_register">
+						{% if show_name %}
+							<input type="text" name="firstname" value="" placeholder="{{register_name_text}}" class="form-control" />
+						{% endif %}
+						{% if show_lastname %}
+							<input type="text" name="lastname" value="" placeholder="{{register_lastname_text}}" class="form-control" />
+						{% endif %}
+						{% if show_phone %}
+							<input type="text" name="telephone" value="" placeholder="{{register_phone_text}}" class="customer_phone form-control" />
+						{% endif %}
+						<input type="text" name="email" value="" placeholder="{{register_mail_text}}" class="form-control" />
+						<input type="password" name="password" value="" placeholder="{{register_password_text}}" class="form-control" />
+						<div class="customer-group" style="display:{{customer_groups|length > 1 ? 'block' : 'none'}}">
+							{% for customer_group in customer_groups %}
+								<label class="input"><input type="radio" name="customer_group_id" value="{{customer_group.customer_group_id}}" {{customer_group.customer_group_id == customer_group_id ? 'checked="checked"'}} /><span></span><span>{{customer_group.name}}</span></label>
+							{% endfor %}
+						</div>
+						{% if text_agree %}
+							<label class="input"><input id="confirm" type="checkbox" name="confirm" value="1" class="form-control" /><span></span>{{text_agree}}</label>
+						{% endif %}
+						
+						{{ captcha }}
+					</form>
+					<div class="row">
+						<div class="col-xs-12">
+							<button class="register_button btn btn-primary" onclick="uniRegisterSend();" data-loading-text="{{text_loading}}">{{text_register2}}</button>
+						</div>
+						{% if show_register_login %}
+							<div class="col-xs-12">
+								{{text_register3}} 
+								{% if show_login %}
+									<a data-dismiss="modal" onclick="uniLoginOpen();">{{text_login3}}</a>
+								{% else %}
+									<a href="{{login_link}}">{{text_login3}}</a>
+								{% endif %}
+							</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			$('body').on('focus', '#modal-register-form .customer_phone', function(){
+				$(this).mask('{{register_phone_mask}}');
+			});
+		</script>
+	</div>
+{% endif %}

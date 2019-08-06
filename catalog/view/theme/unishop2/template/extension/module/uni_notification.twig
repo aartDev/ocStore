@@ -1,0 +1,72 @@
+{% if status %}
+	<div id="uni-notification" class="{{status == 1 ? 'fixed' : 'modal'}}">
+		{% if status == 1 %}
+			<div class="container">
+		{% else %}
+			<div class="modal-dialog">
+			<div class="modal-content">
+			<div class="modal-body">
+		{% endif %}
+		<div class="wrapper">
+			<div class="text">{{text}}</div>
+			<div class="buttons">
+				{% if cancel_show %}
+					<button class="btn btn-default">{{cancel_text}}</button>
+				{% endif %}
+				<button class="btn btn-sm btn-primary">{{apply_text}}</button>
+			</div>
+		</div>
+		{% if status == 1 %}
+			</div>
+		{% else %}
+			</div>
+			</div>
+			</div>
+		{% endif %}
+	</div>
+	<script>
+		$(function() {
+			var uni_notification = $('#uni-notification');
+	
+			{% if status == 2 %}
+				uni_notification.modal({
+					keyboard: false,
+					backdrop: 'static',
+				});
+				
+				uni_notification.addClass(uniJsVars.popup_effect_in).modal('show')
+			{% endif %}
+		
+			$('#uni-notification .btn-primary').on('click', function() {
+				$.ajax({
+					url:'index.php?route=extension/module/uni_notification/apply',
+					type:'post',
+					dataType:'json',
+					success: function(json) {
+						if(json['success']){
+							notificationClose();
+						}
+					}
+				});
+			});
+		
+			$('#uni-notification .btn-default').on('click', function() {
+				{% if cancel_close %}
+					window.close();
+				{% else %}
+					notificationClose();
+				{% endif %}
+			});
+		
+			function notificationClose() {
+				{% if status == 1 %}
+					uni_notification.fadeOut('fast', function() {
+						uni_notification.remove();
+					});
+				{% else %}
+					uni_notification.modal('hide');
+				{% endif %}
+			}
+		});
+	</script>
+{% endif %}

@@ -1,0 +1,77 @@
+{% if categories or headerlinks2 %}
+	{% set one_line = 0 %}
+	{% set two_line = 0 %}
+	{% if menu_type == 1 %}
+		<div class="col-sm-12 col-md-9 col-lg-9 col-xxl-16 col-md-push-3 col-lg-push-3 col-xxl-push-4">
+			{% if headerlinks2 %}
+				<ul id="menu2">
+				{% for key, headerlink in headerlinks2 %}
+					<li><a href="{{headerlink.href}}" title="{{headerlink.name}}">{% if 'fa-' in headerlink.icon %}<span><i class="{{headerlink.icon}} fa-fw"></i></span>{% elseif headerlink.icon %}<span><img src="image/{{headerlink.icon}}" alt="" /></span>{% endif %}{{headerlink.name}}</a></li>
+				{% endfor %}
+				</ul>
+				<script>uniMenuUpd.init('#menu2');</script>
+			{% endif %}
+		</div>
+	{% endif %}
+	<div class="{{menu_type == 1 ? 'col-sm-6 col-md-3 col-lg-3 col-xxl-4 col-md-pull-9 col-lg-pull-9 col-xxl-pull-16' : 'col-sm-6 col-md-12 col-lg-12'}}">
+		<nav id="menu" class="{{menu_type == 1 ? 'menu1' : 'menu2'}} navbar">
+			<div class="navbar-header">
+				<button type="button" class="btn-navbar navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">{{text_menu}}<i class="fa fa-bars" aria-hidden="true"></i></button>
+			</div>
+			<div class="collapse navbar-collapse navbar-ex1-collapse">
+				<ul class="nav navbar-nav">
+					{% for category in categories %}
+						<li {{category.children ? 'class="has-children"'}}>
+							<a {{category.disabled ? 'class="disabled"' : 'href="'~category.href~'"'}}>
+								{% if 'fa-' in category.icon %}<span><i class="{{ category.icon }} fa-fw"></i></span>{% elseif category.icon %}<span><img src="image/{{category.icon}}" alt="" /></span>{% endif %}{{category.name}}
+								{{category.children ? '<i class="fas fa-angle-down fa-fw hidden-xs hidden-sm"></i>'}}
+							</a>
+							{% if category.children %}
+								<span class="dropdown-toggle visible-xs visible-sm"><i class="fa fa-plus" aria-hidden="true"></i><i class="fa fa-minus" aria-hidden="true"></i></span>
+								<div class="second-level dropdown-menu column-{{category.column}}">
+									{% for child in category.children %}
+										<ul class="list-unstyled {{category.column < 5 ? 'col-sm-'~12/category.column : 'col-sm-4'}}">
+											<li>
+												<a {{child.disabled ? 'class="disabled"' : 'href="'~child.href~'"'}}>{{ child.name }}</a>
+												{% if child.children and child.children|length > 0 %}
+													<span class="dropdown-toggle visible-xs visible-sm"><i class="fa fa-plus" aria-hidden="true"></i><i class="fa fa-minus" aria-hidden="true"></i></span>
+													<div class="third-level dropdown-menu">
+														<div class="dropdown-inner">
+															<ul class="list-unstyled">
+																{% for child in child.children %}
+																	<li><a {{child.disabled ? 'class="disabled"' : 'href="'~child.href~'"'}}>{{ child.name }}</a></li>
+																{% endfor %}
+															</ul>
+														</div>
+													</div>
+												{% endif %}
+											</li>
+										</ul>
+									{% endfor %}
+								</div>
+							{% endif %}
+						</li>
+						{% if category.name|length <= 30 %}
+							{% set one_line = one_line+1 %}
+						{% else %}
+							{% set two_line = two_line+1 %}
+						{% endif %}
+					{% endfor %}
+				</ul>
+			</div>
+		</nav>
+	</div>
+	{% if menu_type == 1 and menu_expanded %}
+		{% set total = (((one_line * 41) + (two_line * 60)) + (home ? 0 : -25)) %}
+		<script>
+		var style = '<style>';
+			style += '@media (min-width:992px) {';
+			style += '#column-left {margin-top:{{ total }}px}';
+			style += '#menu.menu1 {border-radius:4px 4px 0 0}'; 
+			style += '#menu.menu1 .navbar-collapse {display:block !important}}</style>';
+			style + '}';
+		$('head').append(style);
+		</script>
+	{% endif %}
+	{% if menu_type == 2 %}<script>uniMenuUpd.init('#menu.menu2 .nav');</script>{% endif %}
+{% endif %}
